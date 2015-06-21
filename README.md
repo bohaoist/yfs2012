@@ -16,12 +16,13 @@
 在这部分中不需要考虑网络带来的重复RPC,假设网络是完美的.仅仅需要实现基本的锁操作**acquire**和**release**. 并且必须遵守一个不变量:**任何时间点,同一个锁不能被两个或者以上的锁客户端持有**
 下面介绍实现过程. 
 lock_smain.cc包含锁服务的基本过程.其中定义一个lock_server ls,然后在RPC服务中登记各种请求对应的handler. 我们需要实现**acquire**和**release**,因此也需要在RPC服务中添加对应的handler,在lock_smain.cc中增加相应的代码,如下:
+    
+    lock_server ls; 
+    rpcs server(atoi(argv[1]), count);
+    server.reg(lock_protocol::stat, &ls, &lock_server::stat);
+    server.reg(lock_protocol::acquire, &ls, &lock_server::acquire);
+    server.reg(lock_protocol::release, &ls, &lock_server::release);`
 
-	lock_server ls; 
-	rpcs server(atoi(argv[1]), count);
-	server.reg(lock_protocol::stat, &ls, &lock_server::stat);
-	server.reg(lock_protocol::acquire, &ls, &lock_server::acquire);
-	server.reg(lock_protocol::release, &ls, &lock_server::release);`
 **锁客户端**的请求**lock_protocol::acquire**和**lock_protocol::release**
 在**锁服务器**中相应的handler是**lock_server::acquire**和**lock_server::release**. 
 
@@ -217,3 +218,349 @@ iter->cb_present表示结果是否有效.如果有效则返回DONE.如果无效�
 在窗口中找到对应的请求(这个请求是在checkduplicate_and_update中加入到窗口的,但是结果还未有效,handler还在处理),然后保存将结果保存.并且置cb_preset为true.表示结果有效. 
 
 最后测试./rpc/rpctest和lock_tester.在网络有丢失的情形下,测试成功.
+
+#Lab 2: Basic File Server
+##简介
+
+这次实验主要实现下面的功能
+
+ -  create/mknod, lookup, readdir
+ -  setattr, write, read.
+
+ 这里包含文件的创建,读写,设置属性,读取目录内容,通过文件名查找
+文件的inum等.
+整个yfs分布式文件系统的架构如下:
+
+![yfs](https://github.com/ldaochen/yfs2012/raw/lab2/yfs.jpg)
+
+其中yfs客户端(客户端是相对extent server 来说的)负责实现文件逻辑:例如读写操作等.而extent server 负责存储文件数据, 所以extent server的作用就像一个磁盘. 尽管图中有多个yfs运行在不同的主机上,但是它们"看到"的文件系统
+都是一样的. 
+###第一部分
+这一部分需要实现**extent server**和**create/mknod**,**lookup**, **readdir**操作. 先介绍下**extent server**的实现.
+
+在extent_server.h中有extent server的定义. 它的主要是负责存储文件数据,作用类似硬盘. 每个文件都有一个id, 文件内容,和对应的属性三个部分. id类似unix-like系统中的i-node 号
+用来唯一标示一个文件. 所以在extent server 中建立起**文件的存储数据结构**如下
+   
+    pthread_mutex_t mutex;
+    struct extent {
+        std::string data;
+        extent_protocol::attr attr;
+    };
+    std::map<extent_protocol::extentid_t, extent> file_map;
+
+ - extent中data域是存储文件的数据
+ - extent中attr域是存储文件的属性,它包含文件修改时间mtime,文件状态改变时间ctime,文件访问时间atime和文件大小size.
+ - file_map 是存储文件的数据结构,每一个文件都是其中的一个<key, value>对.其中key是文件id,value是extent类型的,包含文件内容和属性
+ - mutex使得多个yfs客户端可以互斥的访问file_map
+
+extent server 除了存储文件外还提供一些基本的操作
+ 
+- get: 获取文件内容
+- put: 将新的文件内容写回extent server.
+- getaddr: 获取文件的属性
+- remove: 删除一个文件
+在建立好文件的存储结构file_map后我们需要实现上面的四个方法.
+**get的实现如下**:
+
+        int extent_server::get(extent_protocol::extentid_t id,             std::string &buf)
+        {
+            // You fill this in for Lab 2.
+            ScopedLock _l(&mutex);
+            if (file_map.find(id) != file_map.end()) {
+                file_map[id].attr.atime = time(NULL);
+                buf = file_map[id].data;
+                return extent_protocol::OK;
+            }
+            return extent_protocol::NOENT;
+        }
+其中**get**获取id对应的文件内容,存放到buf中. 实现很简单,只需要在file_map中查询id对应的文件内容即可,但是需要注意修改文件属性中的atime.
+
+**put的实现如下**:
+
+    int extent_server::put(extent_protocol::extentid_t id,             std::string buf, int &)
+    {
+        // You fill this in for Lab 2.
+        ScopedLock _l(&mutex);
+        extent_protocol::attr attr;
+        attr.atime = attr.mtime = attr.ctime = time(NULL);
+        if (file_map.find(id) != file_map.end())
+            attr.atime = file_map[id].attr.atime;
+        attr.size = buf.size();
+        file_map[id].data = buf;
+        file_map[id].attr = attr;
+        return extent_protocol::OK;
+    }
+**put**将buf中的数据写入到id对应的文件中. id可能对应一个新文件,
+也可能是一个已经存在的文件.无论是哪种情形都只要将id对应的文件的
+内容更新为buf中的内容即可.主要需要修改文件属性ctime和mtime.如果这是一个新文件还需要atime.
+
+**getattr的实现如下**:
+
+    int extent_server::getattr(extent_protocol::extentid_t id, extent_protocol::attr &a)
+    {
+   
+
+        ScopedLock _l(&mutex);
+        if (file_map.find(id) != file_map.end()) {
+            a = file_map[id].attr;
+            return extent_protocol::OK;
+        }
+        return extent_protocol::NOENT;
+    }
+
+**getattr**查找id对应的文件,读取该文件的属性存放到a中.
+
+**remove的实现如下**:
+
+    int extent_server::remove(extent_protocol::extentid_t id, int &)
+    {
+    // You fill this in for Lab 2.
+        std::map<extent_protocol::extentid_t, extent>::iterator iter;
+        iter  = file_map.find(id);
+        if (iter != file_map.end()) {
+            file_map.erase(iter);
+            return extent_protocol::OK;
+        } else {
+            return extent_protocol::NOENT;
+        }
+    }
+**remove**删除id对应的文件.
+另外实验要求系统启动后需要有一个名为root的空的根目录文件.所以在extent_server的构造函数中
+需要为extent_server创建这样一个root目录文件. 简单的调用**put**即可.实现如下:
+
+    extent_server::extent_server() {
+        int ret;
+        pthread_mutex_init(&mutex, NULL);
+        //root i-number is 1
+        put(1, "", ret);
+    }
+
+
+在实现文件的存储extent server后,接下来考虑**create/mknod**, **lookup**和**readdir**的实现.
+当用户程序操作**yfs_client**(即前面提到的yfs客户端)管理(served)的文件或者目录(例如测试时产生的yfs1)时, FUSE在内核中的代码会将文件操作请求发送到**yfs_client**, **yfs_client**通过RPC与**extent_server** 交互. 我们需要修改fuse.cc中的代码来调用**yfs_client**中实现的文件逻辑. 在给出具体的实现前给出一些**约定**:
+
+ - 文件id是64位的unsigned long long类型. 其中高32位为0. 低32位表示真实的id. 如果文件id的第31位为0那么这个
+id对应的文件是一个目录.为1表示id对应一个文件.
+ - 文件目录的格式是一系列<name, inum>键值对.name是文件名,inum是文件id,但是为了方便实现.name前后各加一个"/", inum后加一个"/".所以一个目录项的实际是"/"+name+"/"+inum+"/"字符串.
+
+**create/mknod的实现**:
+fuse.cc中fuseserver\_createhelper函数是文件创建的核心函数. 具体的代码实现不列出. 该函数调用**yfs_clent**提供的create方法.
+**yfs_clent**中create的实现如下.
+        
+    int 
+    yfs_client::create(inum parent, const char *name, inum &inum)
+    {
+        int r = OK; 
+        std::string dir_data;
+        std::string file_name;
+        if (ec->get(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }   
+        file_name = "/" + std::string(name) + "/";
+        if (dir_data.find(file_name) != std::string::npos) {
+            return EXIST;
+        }   
+
+        inum = random_inum(true);
+        if (ec->put(inum, std::string()) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }   
+
+        dir_data.append(file_name + filename(inum) + "/");
+        if (ec->put(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+        }   
+    release:
+        return r;
+    }
+
+create函数在目录parent创建一个名为name的文件空文件. 并且为这个文件生成一个唯一id存储在inum中.
+首先读取parent的文件内容.查看文件name是否存在. 如果存在返回EXIST. 否则随机生成一个inum,并调用**put**
+方法创建一个空文件. 然后将文件名和inum写入parent目录文件中.
+
+**lookup的实现**:
+fuse.cc中fuseserver\_lookup函数负责将查询请求发送到**yfs_client**. 也需要我们自己实现,
+具体的代码实现不列出. 该函数调用**yfs_clent**提供的lookup方法.
+**yfs_clent**中lookup的实现如下.
+
+    int
+    yfs_client::lookup(inum parent, const char *name, inum &inum, bool *found)
+    {
+        int r = OK;
+        size_t pos, end;
+        std::string dir_data;
+        std::string file_name;
+        std::string ino;
+        if (ec->get(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+        file_name = "/" + std::string(name) + "/";
+        pos = dir_data.find(file_name);
+        if (pos != std::string::npos) {
+            *found = true;
+            pos += file_name.size();
+            end = dir_data.find_first_of("/", pos);
+            if(end != std::string::npos) {
+                ino = dir_data.substr(pos, end-pos);
+                inum = n2i(ino.c_str());
+            } else {
+                r = IOERR;
+                goto release;
+            }
+        } else {
+            r = IOERR;
+        }
+    release:
+        return r;
+    }
+lookup在目录parent查找名为name的文件,如果找到将found设置为true,inum设置为name对应的文件id.
+首先读入目录文件parent的内容到dir_data. 然后在其中查找文件名name,注意name前后添加了"/",这是因为前面
+我们约定了目录项的格式:"/"+name+"/"+inum+"/", 找到name后,可以根据这三个"/"之间的距离,提取出name和inum.
+
+**readdir的实现**:
+fuse.cc中fuseserver\_readdir函数负责将readdir请求发送到**yfs_client**. 也需要我们自己实现,具体的代码实现不列出. 该函数调用**yfs_clent**提供的readdir方法.
+**yfs_clent**中readdir的实现如下:
+
+    int 
+    yfs_client::readdir(inum inum, std::list<dirent> &dirents) 
+    {
+        int r = OK; 
+        std::string dir_data;
+        std::string inum_str;
+        size_t pos, name_end, name_len, inum_end, inum_len;
+        if (ec->get(inum, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }   
+        pos = 0;
+        while(pos != dir_data.size()) {
+            dirent entry;
+            pos = dir_data.find("/", pos);
+            if(pos == std::string::npos)
+                break;
+            name_end = dir_data.find_first_of("/", pos + 1); 
+            name_len = name_end - pos - 1;
+            entry.name = dir_data.substr(pos + 1, name_len);
+
+            inum_end = dir_data.find_first_of("/", name_end + 1);
+            inum_len = inum_end - name_end - 1;
+            inum_str = dir_data.substr(name_end + 1, inum_len);
+            entry.inum = n2i(inum_str.c_str());
+            dirents.push_back(entry);
+            pos = inum_end + 1;
+        }
+    release:
+        return r;
+    }
+readdir读取目录文件inum, 一次提取出<name, inum>的键值对加入到dirents.
+首先读取文件inum的内容到dir_data中. 根据目录的格式"/"+name+"/"+inum+"/". 
+逐个提取name和inum,最后加入到dirents中. dirents是一个dirent类型的list.
+dirent在yfs_client.h中定义如下
+    
+    struct dirent {
+        std::string name;
+        yfs_client::inum inum;
+    }; 
+    
+所以提取出的name和inum可以组成一个dirent结构,然后加入到dirents中. 
+
+完成第一部分后使用如下命令进行测试
+    
+    ./start.sh
+    /test-lab-2-a.pl ./yfs1
+    ./stop.sh
+如果第二条命令结果是Passed all tests!.则实现正确.即使设置RPC_LOSSY为5,也应该是Passed all tests!
+## 第二部分.
+
+这部分实现**setattr**, **write**个**read**. 分别是设置文件的属性,读和写文件. 完成这部分后可以实现这样的效果: 一个**yfs_client**写的数据可以被另外一个**yfs_client**读取.
+
+**setattr的实现**:
+fuse.cc中fuseserver\_setattr函数函数负责将用户setattr请求发送到**yfs_client**. 也需要我们自己实现, 具体的代码实现不列出. 该函数调用**yfs_clent**提供的setattr方法.
+**yfs_clent**中setattr的实现如下:
+
+    int 
+    yfs_client::setattr(inum inum, struct stat *attr)
+    {
+        int r = OK; 
+        size_t size = attr->st_size;
+        std::string buf;
+        if (ec->get(inum, buf) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }   
+        buf.resize(size, '\0');
+
+        if (ec->put(inum, buf) != extent_protocol::OK) {
+            r = IOERR;
+        }   
+    release:
+        return r;
+    }
+当前setattr只实现了设置文件大小的功能. 首先读取文件inum的内容,
+然后将文件内容调整为size大小. 如果size比文件原来的长度大,那么多出的部分填充'\0'. 最后调用**put**写回文件内容,**put**会根据写回的内容长度修改文件对应的长度属性.
+
+**read的实现**
+fuse.cc中fuseserver\_read函数负责将用户read请求发送到**yfs_client**. 也需要我们自己实现, 具体的代码实现不列出. 该函数调用**yfs_clent**提供的read方法.
+**yfs_clent**中read的实现如下:
+
+    int 
+    yfs_client::read(inum inum, off_t off, size_t size, std::string &buf)
+    {   
+        int r = OK; 
+        std::string file_data;
+        size_t read_size;
+        
+        if (ec->get(inum, file_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }   
+        
+        if (off >= file_data.size())
+        buf = std::string();
+        read_size = size;
+        if(off + size > file_data.size()) 
+            read_size = file_data.size() - off;
+        buf = file_data.substr(off, read_size);
+    release:
+        return r;   
+    }
+
+read函数从文件inum的偏移off处读取size大小的字节到buf中. 如果off比文件长度大则读取0个字节.
+如果off+size 超出了文件大小. 则读到文件尾即可. 该函数首先调用**get**读取文件inum的内容到
+file_data中.然后根据off和size的大小,从file_data中取出合适的字节数到buf.
+
+**write的实现**:
+fuse.cc中fuseserver\_write函数负责将用户write请求发送到**yfs_client**. 也需要我们自己实现,具体的代码实现不列出. 该函数调用**yfs_clent**提供的write方法.
+**yfs_clent**中write的实现如下:
+
+    int 
+    yfs_client::write(inum inum, off_t off, size_t size, const char *buf)
+    {
+        int r = OK; 
+        std::string file_data;
+        if (ec->get(inum, file_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+        if (size + off > file_data.size())
+            file_data.resize(size + off, '\0');
+        for (int i = 0; i < size; i++)
+            file_data[off + i] = buf[i];
+        if (ec->put(inum, file_data) != extent_protocol::OK) {
+            r = IOERR;
+        }
+    release:
+        return r;
+}
+
+write函数将buf中size个字节写入到文件inum的偏移off处. 这里需要考虑几种情形
+
+ 1.  off比文件长度大, 那么需要将文件增大,并且使用'\0'填充,然后再从off处写入.
+ 2.  off+size比文件长度大, 那么文件的大小将会根据写入的数据大小也会相应的调整.
+
+write首先读取文件inum的内容到缓冲区file_data. 接下来调整file_data的大小为最终的大小,
+即off+size, 然后往file_data中写入数据. 最后调用**put**方法写回file_data中的数据.
+
