@@ -14,6 +14,7 @@
 yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)
 {
   ec = new extent_client(extent_dst);
+  lc = new lock_client(lock_dst);
 
 }
 
@@ -100,6 +101,7 @@ yfs_client::setattr(inum inum, struct stat *attr)
 	int r = OK;
 	size_t size = attr->st_size;
 	std::string buf;
+	ScopedLockClient slc(lc, inum);
 	if (ec->get(inum, buf) != extent_protocol::OK) {
 		r = IOERR;
 		goto release;
@@ -140,6 +142,7 @@ yfs_client::write(inum inum, off_t off, size_t size, const char *buf)
 {
 	int r = OK;
 	std::string file_data;
+	ScopedLockClient wlc(lc, inum);
 	if (ec->get(inum, file_data) != extent_protocol::OK) {
 		r = IOERR;
 		goto release;
@@ -169,6 +172,7 @@ yfs_client::create(inum parent, const char *name, inum &inum)
 	int r = OK;
 	std::string dir_data;
 	std::string file_name;
+	ScopedLockClient clc(lc, parent);
 	if (ec->get(parent, dir_data) != extent_protocol::OK) {
 		r = IOERR;
 		goto release;
@@ -255,3 +259,77 @@ yfs_client::readdir(inum inum, std::list<dirent> &dirents)
 release:
 	return r;
 }
+
+int 
+yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &inum)
+{
+	int r = OK;
+	std::string dir_data;
+	std::string dirent, dirname;
+	ScopedLockClient mlc(lc, parent);
+	if (ec->get(parent, dir_data) != extent_protocol::OK) {
+		r = IOERR;
+		goto release;
+	}
+	dirname = "/" + std::string(name) + "/";
+	if (dir_data.find(dirname) != std::string::npos) {
+		return EXIST;
+	}	
+	inum = random_inum(false);
+	
+	if (ec->put(inum, std::string()) != extent_protocol::OK) {
+		r = IOERR;
+		goto release;
+	}
+
+	dirent = dirname + filename(inum) + "/";
+	dir_data += dirent;
+	
+	if (ec->put(parent, dir_data) != extent_protocol::OK) {
+		r = IOERR;
+	}
+
+release:
+	return r;
+}
+int 
+yfs_client::unlink(inum parent, const char *name) 
+{
+	int r = OK;
+	std::string dir_data;
+	std::string filename = "/" + std::string(name) + "/";
+	size_t pos, end, len;
+	inum inum; 
+	ScopedLockClient ulc(lc, parent);
+	if (ec->get(parent, dir_data) != extent_protocol::OK) {
+		r = IOERR;
+		goto release;
+	}	
+	if ((pos = dir_data.find(filename)) == std::string::npos) {
+		r = NOENT;
+		goto release;
+	}
+
+	end = dir_data.find_first_of("/", pos + filename.size());
+	if( end == std::string::npos) {
+		r= NOENT;
+		goto release;
+	}
+	len = end - filename.size() - pos;
+	inum = n2i(dir_data.substr(pos+filename.size(), len));
+	if (!isfile(inum)) {
+		r = IOERR;
+		goto release;
+	}	
+	dir_data.erase(pos, end - pos + 1);	
+	if (ec->put(parent, dir_data) != extent_protocol::OK) {
+		r = IOERR;
+		goto release;
+	}
+	if (ec->remove(inum) != extent_protocol::OK) {
+		r = IOERR;
+	}
+release:
+	return r;
+}
+
