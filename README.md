@@ -69,7 +69,7 @@ RPC系统维护了线程池,当收到一个请求后,从线程池中选择一个
 对应handler,可能是lock_server中的**acquire**或者**release**.
 下面介绍这两个函数的实现. 在lock_server.cc中**acquire**的实现如下:
 	
-	lock_protocol::status
+    lock_protocol::status
 	lock_server::acquire(int clt, lock_protocol::lockid_t lid, int &r) 
 	{
 		lock_protocol::status ret = lock_protocol::OK;
@@ -85,12 +85,12 @@ RPC系统维护了线程池,当收到一个请求后,从线程池中选择一个
 			return ret;
 		} else {
 			lock *new_lock = new lock(lid, lock::LOCKED);
-		//  lockmap[lid] = new_lock;
 			lockmap.insert(std::make_pair(lid, new_lock));
 			pthread_mutex_unlock(&mutex);
 			return ret;
 		}	   
 	}
+
 因为多线程需要互斥的访问共享的数据结构lockmap.所以首先需要获取mutex.
 然后在lockmap中查询lid对应的锁的状态,如果是LOCKED,那么当前线程在该锁
 的条件变量lcond上阻塞直到锁被释放,但是线程将被唤醒,然后在while循环中检测锁的状态,直到可以获取该锁.如果锁的状态是FREE,就直接将锁的状态修改为LOCKED,表示获取该锁. 如果请求的锁不存在,就创建一个新锁加入到lockmap中, 并确保新创建的锁被**锁客户端**获取. 
@@ -564,3 +564,139 @@ write函数将buf中size个字节写入到文件inum的偏移off处. 这里需�
 write首先读取文件inum的内容到缓冲区file_data. 接下来调整file_data的大小为最终的大小,
 即off+size, 然后往file_data中写入数据. 最后调用**put**方法写回file_data中的数据.
 
+#Lab 3: MKDIR, UNLINK, and Locking
+##简介
+这次实现包含两个部分.
+
+ 1. 实现mkdir和unlink操作.
+ 2. 增加锁确保并发的文件访问执行正确.
+ 
+整个yfs分布式文件系统的架构如下:
+
+![yfs](https://github.com/ldaochen/yfs2012/raw/lab2/yfs.jpg)
+
+其中yfs客户端(客户端是相对extent server 来说的)负责实现文件逻辑:例如读写操作等.而extent server 负责存储文件数据, 所以extent server的作用就像一个磁盘.尽管图中有多个yfs运行在不同的主机上,但是它们"看到"的文件系统.
+
+###第一部分
+这部分主要实现mkdir和unlink操作.
+
+**mkdir的实现**:
+mkdir的实现和lab2中的create的实现很类似. mkdir是在父目录中创建一个新的空目录.按照lab2中的介绍,目录文件的
+inum的第31位是0. 在fuse.cc中fuseserver_mkdir函数将用户的mkdir的操作请求发送给**yfs_client**. 主要的mkdir实现就是yfs_client->mkdir(...)方法.其实现如下
+
+    int
+    yfs_client::mkdir(inum parent, const char *name, mode_t mode, inum &inum)
+    {
+        int r = OK;
+        std::string dir_data;
+        std::string dirent, dirname;
+        ScopedLockClient mlc(lc, parent);
+        if (ec->get(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+        dirname = "/" + std::string(name) + "/";
+        if (dir_data.find(dirname) != std::string::npos) {
+            return EXIST;
+        }
+        inum = random_inum(false);
+
+        if (ec->put(inum, std::string()) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+
+        dirent = dirname + filename(inum) + "/";
+        dir_data += dirent;
+
+        if (ec->put(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+        }
+
+    release:
+        return r;
+    }
+
+mkdir的实现逻辑和lab2中的create实现逻辑基本一样,不同的是mkdir创建的是一个新的空目录,create创建的是一个新普通文件. 目录对应的inum第31为0,文件对应的inum第31位为1.所以这里random_inum的参数是false,表示是一个目录,返回的inum的第31为0.
+
+**unlink的实现**
+unlink用于删除一个文件.fuse.cc中的fuseserver_unlink函数负责将用户的unlink请求发送给**yfs_client**.yfs_client->unlink实现了主要的删除逻辑. 实现如下
+
+    int
+    yfs_client::unlink(inum parent, const char *name)
+    {
+        int r = OK;
+        std::string dir_data;
+        std::string filename = "/" + std::string(name) + "/";
+        size_t pos, end, len;
+        inum inum;
+        ScopedLockClient ulc(lc, parent);
+        if (ec->get(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+        if ((pos = dir_data.find(filename)) == std::string::npos) {
+            r = NOENT;
+            goto release;
+        }
+
+        end = dir_data.find_first_of("/", pos + filename.size());
+        if( end == std::string::npos) {
+            r= NOENT;
+            goto release;
+        }
+        len = end - filename.size() - pos;
+        inum = n2i(dir_data.substr(pos+filename.size(), len));
+        if (!isfile(inum)) {
+            r = IOERR;
+            goto release;
+        }
+        dir_data.erase(pos, end - pos + 1);
+        if (ec->put(parent, dir_data) != extent_protocol::OK) {
+            r = IOERR;
+            goto release;
+        }
+        if (ec->remove(inum) != extent_protocol::OK) {
+            r = IOERR;
+        }
+    release:
+        return r;
+    }
+    
+unlink从目录parent中删除名为name的文件. 首先读取目录文件parent的内容到dir_data中. 如果name在目录parent中不存在或者name对应的是一个目录,那么返回出错信息. 如果找到了name,提取出名为name的文件对应的inum. 调用**extent_client**提供的remove方法删除该文件.
+然后在目录parent中删除name对应的目录项.
+
+###第二部分
+
+这部分主要处理文件系统的并发访问带来的问题. 例如**yfs_client**的**create**操作, 这个操作需要从extent server中读取目录的内容, 做一些修改,然后将修改后的内容写回extent server. 假设两个**yfs_client**同时在相同的目录中创建名字不同的文件. 那么两个**yfs_client**可能都会从extent server中获取旧的内容.然后写入新的目录项,最后两个**yfs_clent**将修改后的内容写回到exten_server. 那么结果是只有一个**yfs_client**写的目录项会保存,另一个被覆盖了. 正确的结果应该是这两个目录项都存在. 类似的存在还存在create和unlink之间, mkdir和unlink, write和write等. 
+
+为了保证并发访问的正确,我们为每个文件设置一个锁, 并且使用文件的inum作为锁的id. 因为锁是在单独一个服务上. 所以**yfs_client** 需要维护一个锁客户端. 代码如下
+
+    class yfs_client {
+        extent_client *ec;
+        lock_client *lc;
+        public:
+        ...
+    }
+这里在**yfs_client** 中添加了一个**lock_client**,即lc.
+同时新增了一个类ScopeLockClient.
+
+    class ScopedLockClient {
+        private:
+            lock_client *lc_;
+            lock_protocol::lockid_t lid;
+        public:
+            ScopedLockClient(lock_client *lc, lock_protocol::lockid_t lid):
+                lc_(lc),lid(lid) {
+                lc_->acquire(lid);
+            }
+            ~ScopedLockClient() {
+                lc_->release(lid);
+            }
+    };
+    
+当实例化一个ScopedLocKClient对象是会自动获取锁, 当这个对象析构时自动的释放锁. 所以不需要显示的获取锁和释放锁.
+
+根据前面的分析,**yfs_client**中需要加锁的函数包括
+**create**, **unlink**, **mdkir**, **write**和**setattr**. 只需要在这些函数中实例化一个
+ScopedLockClient对象即可. 具体代码可以查看第一部分中给出的代码.
