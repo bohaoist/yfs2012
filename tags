@@ -1,0 +1,624 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CB_MASK	rpc/pollmgr.h	/^	CB_MASK = ~0x11,$/;"	e	enum:__anon2
+CB_NONE	rpc/pollmgr.h	/^	CB_NONE = 0x0,$/;"	e	enum:__anon2
+CB_RDONLY	rpc/pollmgr.h	/^	CB_RDONLY = 0x1,$/;"	e	enum:__anon2
+CB_RDWR	rpc/pollmgr.h	/^	CB_RDWR = 0x11,$/;"	e	enum:__anon2
+CB_WRONLY	rpc/pollmgr.h	/^	CB_WRONLY = 0x10,$/;"	e	enum:__anon2
+CC	GNUmakefile	/^CC = g++$/;"	m
+CLOCK_MONOTONIC	gettime.cc	/^	CLOCK_MONOTONIC,$/;"	e	enum:__anon1	file:
+CLOCK_MONOTONIC	gettime.h	/^	CLOCK_MONOTONIC,$/;"	e	enum:__anon6
+CLOCK_PROCESS_CPUTIME_ID	gettime.cc	/^	CLOCK_PROCESS_CPUTIME_ID,$/;"	e	enum:__anon1	file:
+CLOCK_PROCESS_CPUTIME_ID	gettime.h	/^	CLOCK_PROCESS_CPUTIME_ID,$/;"	e	enum:__anon6
+CLOCK_REALTIME	gettime.cc	/^	CLOCK_REALTIME,$/;"	e	enum:__anon1	file:
+CLOCK_REALTIME	gettime.h	/^	CLOCK_REALTIME,$/;"	e	enum:__anon6
+CLOCK_THREAD_CPUTIME_ID	gettime.cc	/^	CLOCK_THREAD_CPUTIME_ID$/;"	e	enum:__anon1	file:
+CLOCK_THREAD_CPUTIME_ID	gettime.h	/^	CLOCK_THREAD_CPUTIME_ID$/;"	e	enum:__anon6
+CXX	GNUmakefile	/^CXX = g++$/;"	m
+CXXFLAGS	GNUmakefile	/^CXXFLAGS =  -g -MMD -Wall -I. -I$(RPC) -DLAB=$(LAB) -DSOL=$(SOL) -D_FILE_OFFSET_BITS=64$/;"	m
+DEFAULT_RPC_SZ	rpc/marshall.h	/^	DEFAULT_RPC_SZ = 1024,$/;"	e	enum:__anon3
+DONE	rpc/rpc.h	/^		DONE, \/\/ duplicate of an RPC we already replied to (have reply)$/;"	e	enum:rpcs::__anon5
+EPollAIO	rpc/pollmgr.cc	/^EPollAIO::EPollAIO()$/;"	f	class:EPollAIO
+EPollAIO	rpc/pollmgr.h	/^class EPollAIO : public aio_mgr {$/;"	c
+EXIST	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
+FORGOTTEN	rpc/rpc.h	/^		FORGOTTEN,  \/\/ duplicate of an old RPC whose reply we've forgotten$/;"	e	enum:rpcs::__anon5
+FREE	lock_protocol.h	/^    enum lock_status {FREE, LOCKED};$/;"	e	enum:lock::lock_status
+FUSEFLAGS	GNUmakefile	/^FUSEFLAGS= -D_FILE_OFFSET_BITS=64 -DFUSE_USE_VERSION=25 -I\/usr\/local\/include\/fuse -I\/usr\/include\/fuse$/;"	m
+INPROGRESS	rpc/rpc.h	/^		INPROGRESS, \/\/ duplicate of an RPC we're still processing$/;"	e	enum:rpcs::__anon5
+IOERR	extent_protocol.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR };$/;"	e	enum:extent_protocol::xxstatus
+IOERR	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	e	enum:lock_protocol::xxstatus
+IOERR	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
+Instance	rpc/pollmgr.cc	/^PollMgr::Instance()$/;"	f	class:PollMgr
+JSL_DBG_1	rpc/jsl_log.h	/^	JSL_DBG_1 = 1, \/\/ Critical$/;"	e	enum:dbcode
+JSL_DBG_2	rpc/jsl_log.h	/^	JSL_DBG_2 = 2, \/\/ Error$/;"	e	enum:dbcode
+JSL_DBG_3	rpc/jsl_log.h	/^	JSL_DBG_3 = 3, \/\/ Info$/;"	e	enum:dbcode
+JSL_DBG_4	rpc/jsl_log.h	/^	JSL_DBG_4 = 4, \/\/ Debugging$/;"	e	enum:dbcode
+JSL_DBG_OFF	rpc/jsl_log.h	/^	JSL_DBG_OFF = 0,$/;"	e	enum:dbcode
+JSL_DEBUG_LEVEL	rpc/jsl_log.cc	/^int JSL_DEBUG_LEVEL = 0;$/;"	v
+LAB	GNUmakefile	/^LAB=2$/;"	m
+LAB2GE	GNUmakefile	/^LAB2GE=$(shell expr $(LAB) \\>\\= 2)$/;"	m
+LAB3GE	GNUmakefile	/^LAB3GE=$(shell expr $(LAB) \\>\\= 3)$/;"	m
+LAB4GE	GNUmakefile	/^LAB4GE=$(shell expr $(LAB) \\>\\= 4)$/;"	m
+LAB5GE	GNUmakefile	/^LAB5GE=$(shell expr $(LAB) \\>\\= 5)$/;"	m
+LAB6GE	GNUmakefile	/^LAB6GE=$(shell expr $(LAB) \\>\\= 6)$/;"	m
+LAB7GE	GNUmakefile	/^LAB7GE=$(shell expr $(LAB) \\>\\= 7)$/;"	m
+LDFLAGS	GNUmakefile	/^LDFLAGS = -L. -L\/usr\/local\/lib$/;"	m
+LDLIBS	GNUmakefile	/^LDLIBS = -lpthread $/;"	m
+LOCKED	lock_protocol.h	/^    enum lock_status {FREE, LOCKED};$/;"	e	enum:lock::lock_status
+MACFLAGS	GNUmakefile	/^  MACFLAGS= -D__FreeBSD__=10$/;"	m
+MACFLAGS	GNUmakefile	/^  MACFLAGS=$/;"	m
+MAX_PDU	rpc/connection.cc	17;"	d	file:
+MAX_POLL_FDS	rpc/pollmgr.h	11;"	d
+NEW	rpc/rpc.h	/^		NEW,  \/\/ new RPC, not a duplicate$/;"	e	enum:rpcs::__anon5
+NOENT	extent_protocol.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR };$/;"	e	enum:extent_protocol::xxstatus
+NOENT	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	e	enum:lock_protocol::xxstatus
+NOENT	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
+NUM_CL	rpc/rpctest.cc	15;"	d	file:
+OK	extent_protocol.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR };$/;"	e	enum:extent_protocol::xxstatus
+OK	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	e	enum:lock_protocol::xxstatus
+OK	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
+PollMgr	rpc/pollmgr.cc	/^PollMgr::PollMgr() : pending_change_(false)$/;"	f	class:PollMgr
+PollMgr	rpc/pollmgr.h	/^class PollMgr {$/;"	c
+PollMgrInit	rpc/pollmgr.cc	/^PollMgrInit()$/;"	f
+RETRY	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	e	enum:lock_protocol::xxstatus
+RPC	GNUmakefile	/^RPC=.\/rpc$/;"	m
+RPCERR	extent_protocol.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR };$/;"	e	enum:extent_protocol::xxstatus
+RPCERR	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	e	enum:lock_protocol::xxstatus
+RPCERR	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
+RPC_HEADER_SZ	rpc/marshall.h	/^	RPC_HEADER_SZ = static_max<sizeof(req_header), sizeof(reply_header)>::value + sizeof(rpc_sz_t) + sizeof(rpc_checksum_t)$/;"	e	enum:__anon3
+SOL	GNUmakefile	/^SOL=0$/;"	m
+ScopedLock	rpc/slock.h	/^		ScopedLock(pthread_mutex_t *m): m_(m) {$/;"	f	struct:ScopedLock
+ScopedLock	rpc/slock.h	/^struct ScopedLock {$/;"	s
+SelectAIO	rpc/pollmgr.cc	/^SelectAIO::SelectAIO() : highfds_(0)$/;"	f	class:SelectAIO
+SelectAIO	rpc/pollmgr.h	/^class SelectAIO : public aio_mgr {$/;"	c
+TO	rpc/rpc.h	/^		struct TO {$/;"	s	class:rpcc
+ThrPool	rpc/thr_pool.cc	/^ThrPool::ThrPool(int sz, bool blocking)$/;"	f	class:ThrPool
+ThrPool	rpc/thr_pool.h	/^class ThrPool {$/;"	c
+VERIFY	lang/verify.h	10;"	d
+VERIFY	lang/verify.h	12;"	d
+XXX	rpc/method_thread.h	/^		class XXX {$/;"	c	namespace:__anon4
+__JSL_LOG_H__	rpc/jsl_log.h	2;"	d
+__SCOPED_LOCK__	rpc/slock.h	2;"	d
+__THR_POOL__	rpc/thr_pool.h	2;"	d
+__clock_gettime_inf	gettime.cc	/^static mach_timebase_info_data_t __clock_gettime_inf;$/;"	v	file:
+_buf	rpc/marshall.h	/^		char *_buf;     \/\/ Base of the raw bytes buffer (dynamically readjusted)$/;"	m	class:marshall
+_buf	rpc/marshall.h	/^		char *_buf;$/;"	m	class:unmarshall
+_capa	rpc/marshall.h	/^		int _capa;      \/\/ Capacity of the buffer$/;"	m	class:marshall
+_ind	rpc/marshall.h	/^		int _ind;       \/\/ Read\/write head position$/;"	m	class:marshall
+_ind	rpc/marshall.h	/^		int _ind;$/;"	m	class:unmarshall
+_ok	rpc/marshall.h	/^		bool _ok;$/;"	m	class:unmarshall
+_sz	rpc/marshall.h	/^		int _sz;$/;"	m	class:unmarshall
+a	lock_tester.cc	/^lock_protocol::lockid_t a = 1;$/;"	v
+a	rpc/thr_pool.h	/^			void *a; \/\/function arguments$/;"	m	struct:ThrPool::job_t
+a1	rpc/method_thread.h	/^				A1 a1;$/;"	m	class:__anon4::XXX
+a2	rpc/method_thread.h	/^				A2  a2;$/;"	m	class:__anon4::XXX
+accept_conn	rpc/connection.cc	/^tcpsconn::accept_conn()$/;"	f	class:tcpsconn
+acquire	lock_client.cc	/^lock_client::acquire(lock_protocol::lockid_t lid)$/;"	f	class:lock_client
+acquire	lock_protocol.h	/^    acquire = 0x7001,$/;"	e	enum:lock_protocol::rpc_numbers
+acquire	lock_server.cc	/^lock_server::acquire(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
+addJob	rpc/thr_pool.cc	/^ThrPool::addJob(void *(*f)(void *), void *a)$/;"	f	class:ThrPool
+addObjJob	rpc/thr_pool.h	/^ThrPool::addObjJob(C *o, void (C::*m)(A), A a)$/;"	f	class:ThrPool
+add_callback	rpc/pollmgr.cc	/^PollMgr::add_callback(int fd, poll_flag flag, aio_callback *ch)$/;"	f	class:PollMgr
+add_reply	rpc/rpc.cc	/^rpcs::add_reply(unsigned int clt_nonce, unsigned int xid,$/;"	f	class:rpcs
+add_timespec	rpc/rpc.cc	/^add_timespec(const struct timespec &a, int b, struct timespec *result)$/;"	f
+aio_	rpc/pollmgr.h	/^		aio_mgr *aio_;$/;"	m	class:PollMgr
+aio_callback	rpc/pollmgr.h	/^class aio_callback {$/;"	c
+aio_mgr	rpc/pollmgr.h	/^class aio_mgr {$/;"	c
+algorithm_h	lang/algorithm.h	4;"	d
+append	test-lab-2-b.pl	/^sub append {$/;"	s
+atime	extent_protocol.h	/^    unsigned int atime;$/;"	m	struct:extent_protocol::attr
+atime	yfs_client.h	/^    unsigned long atime;$/;"	m	struct:yfs_client::dirinfo
+atime	yfs_client.h	/^    unsigned long atime;$/;"	m	struct:yfs_client::fileinfo
+atmostonce_failure	rpc/rpc.h	/^		static const int atmostonce_failure = -4;$/;"	m	class:rpc_const
+attr	extent_protocol.h	/^  struct attr {$/;"	s	class:extent_protocol
+attr	rpc/rpctest.cc	/^pthread_attr_t attr;$/;"	v
+attr_	rpc/thr_pool.h	/^		pthread_attr_t attr_;$/;"	m	class:ThrPool
+b	lock_tester.cc	/^lock_protocol::lockid_t b = 2;$/;"	v
+bind	rpc/rpc.cc	/^rpcc::bind(TO to)$/;"	f	class:rpcc
+bind	rpc/rpc.h	/^		static const unsigned int bind = 1;   \/\/ handler number reserved for bind$/;"	m	class:rpc_const
+bind_done_	rpc/rpc.h	/^		bool bind_done_;$/;"	m	class:rpcc
+bind_failure	rpc/rpc.h	/^		static const int bind_failure = -6;$/;"	m	class:rpc_const
+block_remove_fd	rpc/pollmgr.cc	/^PollMgr::block_remove_fd(int fd)$/;"	f	class:PollMgr
+blockadd_	rpc/thr_pool.h	/^		bool blockadd_;$/;"	m	class:ThrPool
+buf	rpc/connection.h	/^			char *buf;$/;"	m	struct:connection::charbuf
+buf	rpc/rpc.h	/^		char *buf;      \/\/ the reply buffer$/;"	m	struct:rpcs::reply_t
+buf	rpc/rpc.h	/^		char *buf;$/;"	m	struct:rpcs::djob_t
+buf	rpc/rpc.h	/^                    std::string buf;$/;"	m	struct:rpcc::request
+bundle	rpc/connection.h	/^	bundle(chanmgr *m, int s, int l):mgr(m),tcp(s),lossy(l) {}$/;"	f	struct:bundle
+bundle	rpc/connection.h	/^struct bundle {$/;"	s
+c	lock_tester.cc	/^lock_protocol::lockid_t c = 3;$/;"	v
+c	rpc/rpc.h	/^			pthread_cond_t c;$/;"	m	struct:rpcc::caller
+call	rpc/rpc.h	/^rpcc::call(unsigned int proc, R & r, TO to) $/;"	f	class:rpcc
+call	rpc/rpc.h	/^rpcc::call(unsigned int proc, const A1 & a1, R & r, TO to) $/;"	f	class:rpcc
+call	rpc/rpc.h	/^rpcc::call(unsigned int proc, const A1 & a1, const A2 & a2,$/;"	f	class:rpcc
+call1	rpc/rpc.cc	/^rpcc::call1(unsigned int proc, marshall &req, unmarshall &rep,$/;"	f	class:rpcc
+call_m	rpc/rpc.h	/^rpcc::call_m(unsigned int proc, marshall &req, R & r, TO to) $/;"	f	class:rpcc
+callbacks_	rpc/pollmgr.h	/^		aio_callback *callbacks_[MAX_POLL_FDS];$/;"	m	class:PollMgr
+caller	rpc/rpc.cc	/^rpcc::caller::caller(unsigned int xxid, unmarshall *xun)$/;"	f	class:rpcc::caller
+caller	rpc/rpc.h	/^		struct caller {$/;"	s	class:rpcc
+calls_	rpc/rpc.h	/^		std::map<int, caller *> calls_;$/;"	m	class:rpcc
+cancel	rpc/rpc.cc	/^rpcc::cancel(void)$/;"	f	class:rpcc
+cancel_failure	rpc/rpc.h	/^		static const int cancel_failure = -7;$/;"	m	class:rpc_const
+cb_present	rpc/rpc.h	/^		bool cb_present; \/\/ whether the reply buffer is valid$/;"	m	struct:rpcs::reply_t
+chan_	rpc/rpc.h	/^		connection *chan_;$/;"	m	class:rpcc
+chan_m_	rpc/rpc.h	/^		pthread_mutex_t chan_m_;$/;"	m	class:rpcc
+changedone_c_	rpc/pollmgr.h	/^		pthread_cond_t changedone_c_;$/;"	m	class:PollMgr
+chanmgr	rpc/connection.h	/^class chanmgr {$/;"	c
+channo	rpc/connection.h	/^		int channo() { return fd_; }$/;"	f	class:connection
+charbuf	rpc/connection.h	/^			charbuf (char *b, int s) : buf(b), sz(s), solong(0){}$/;"	f	struct:connection::charbuf
+charbuf	rpc/connection.h	/^			charbuf(): buf(NULL), sz(0), solong(0) {}$/;"	f	struct:connection::charbuf
+charbuf	rpc/connection.h	/^		struct charbuf {$/;"	s	class:connection
+check_grant	lock_tester.cc	/^check_grant(lock_protocol::lockid_t lid)$/;"	f
+check_release	lock_tester.cc	/^check_release(lock_protocol::lockid_t lid)$/;"	f
+checkcontent	test-lab-2-b.pl	/^sub checkcontent {$/;"	s
+checkduplicate_and_update	rpc/rpc.cc	/^rpcs::checkduplicate_and_update(unsigned int clt_nonce, unsigned int xid,$/;"	f	class:rpcs
+checknot	test-lab-2-b.pl	/^sub checknot {$/;"	s
+cl	extent_client.h	/^  rpcc *cl;$/;"	m	class:extent_client
+cl	lock_client.h	/^  rpcc *cl;$/;"	m	class:lock_client
+clean_files	GNUmakefile	/^clean_files=rpc\/rpctest rpc\/*.o rpc\/*.d rpc\/librpc.a *.o *.d yfs_client extent_server lock_server lock_tester lock_demo rpctest test-lab-3-b test-lab-3-c rsm_tester$/;"	m
+clear	rpc/rpc.h	/^                    void clear() { buf.clear(); xid = -1; }$/;"	f	struct:rpcc::request
+client1	rpc/rpctest.cc	/^client1(void *xx)$/;"	f
+client2	rpc/rpctest.cc	/^client2(void *xx)$/;"	f
+client3	rpc/rpctest.cc	/^client3(void *xx)$/;"	f
+clients	rpc/rpctest.cc	/^rpcc *clients[NUM_CL];  \/\/ client rpc object$/;"	v
+clock_gettime	gettime.cc	/^int clock_gettime(clockid_t clk_id, struct timespec *tp) {$/;"	f
+clock_gettime	gettime.cc	65;"	d	file:
+clockid_t	gettime.cc	/^} clockid_t;$/;"	t	typeref:enum:__anon1	file:
+clockid_t	gettime.h	/^} clockid_t;$/;"	t	typeref:enum:__anon6
+closeconn	rpc/connection.cc	/^connection::closeconn()$/;"	f	class:connection
+clt_nonce	rpc/marshall.h	/^	unsigned int clt_nonce;$/;"	m	struct:req_header
+clt_nonce_	rpc/rpc.h	/^		unsigned int clt_nonce_;$/;"	m	class:rpcc
+cmp_timespec	rpc/rpc.cc	/^cmp_timespec(const struct timespec &a, const struct timespec &b)$/;"	f
+compare	rpc/connection.cc	/^connection::compare(connection *another)$/;"	f	class:connection
+concurrent_test	rpc/rpctest.cc	/^concurrent_test(int nt)$/;"	f
+conn	rpc/rpc.h	/^		connection *conn;$/;"	m	struct:rpcs::djob_t
+connect_to_dst	rpc/connection.cc	/^connect_to_dst(const sockaddr_in &dst, chanmgr *mgr, int lossy)$/;"	f
+connection	rpc/connection.cc	/^connection::connection(chanmgr *m1, int f1, int l1) $/;"	f	class:connection
+connection	rpc/connection.h	/^class connection : public aio_callback {$/;"	c
+connection_h	rpc/connection.h	2;"	d
+conns_	rpc/connection.h	/^		std::map<int, connection *> conns_;$/;"	m	class:tcpsconn
+conns_	rpc/rpc.h	/^	std::map<unsigned int, connection *> conns_;$/;"	m	class:rpcs
+conss_m_	rpc/rpc.h	/^	pthread_mutex_t conss_m_; \/\/ protect conns_$/;"	m	class:rpcs
+count_m_	rpc/rpc.h	/^	pthread_mutex_t count_m_;  \/\/protect modification of counts$/;"	m	class:rpcs
+count_mutex	lock_tester.cc	/^pthread_mutex_t count_mutex;$/;"	v
+counting_	rpc/rpc.h	/^	const int counting_;$/;"	m	class:rpcs
+counts_	rpc/rpc.h	/^	std::map<int, int> counts_;$/;"	m	class:rpcs
+create	yfs_client.cc	/^yfs_client::create(inum parent, const char *name, inum &inum)$/;"	f	class:yfs_client
+create_time_	rpc/connection.h	/^                struct timeval create_time_;$/;"	m	class:connection	typeref:struct:connection::timeval
+createagain	test-lab-2-a.pl	/^sub createagain {$/;"	s
+createone	test-lab-2-a.pl	/^sub createone {$/;"	s
+cstr	rpc/marshall.h	/^		char *cstr() { return _buf;}$/;"	f	class:marshall
+cstr	rpc/marshall.h	/^		char *cstr() { return _buf;}$/;"	f	class:unmarshall
+ct	lock_tester.cc	/^int ct[256];$/;"	v
+ctime	extent_protocol.h	/^    unsigned int ctime;$/;"	m	struct:extent_protocol::attr
+ctime	yfs_client.h	/^    unsigned long ctime;$/;"	m	struct:yfs_client::dirinfo
+ctime	yfs_client.h	/^    unsigned long ctime;$/;"	m	struct:yfs_client::fileinfo
+curr_counts_	rpc/rpc.h	/^	int curr_counts_;$/;"	m	class:rpcs
+dbcode	rpc/jsl_log.h	/^enum dbcode {$/;"	g
+dead_	rpc/connection.h	/^		bool dead_;$/;"	m	class:connection
+deadcheck	test-lab-2-a.pl	/^sub deadcheck {$/;"	s
+decref	rpc/connection.cc	/^connection::decref()$/;"	f	class:connection
+del_callback	rpc/pollmgr.cc	/^PollMgr::del_callback(int fd, poll_flag flag)$/;"	f	class:PollMgr
+deleteone	test-lab-2-a.pl	/^sub deleteone {$/;"	s
+deq	rpc/fifo.h	/^fifo<T>::deq(T *e)$/;"	f	class:fifo
+destroy_wait_	rpc/rpc.h	/^		bool destroy_wait_;$/;"	m	class:rpcc
+destroy_wait_c_	rpc/rpc.h	/^		pthread_cond_t destroy_wait_c_;$/;"	m	class:rpcc
+diff_timespec	rpc/rpc.cc	/^diff_timespec(const struct timespec &end, const struct timespec &start)$/;"	f
+dirbuf	fuse.cc	/^struct dirbuf {$/;"	s	file:
+dirbuf_add	fuse.cc	/^void dirbuf_add(struct dirbuf *b, const char *name, fuse_ino_t ino)$/;"	f
+dircheck	test-lab-2-a.pl	/^sub dircheck {$/;"	s
+dircheck	test-lab-2-b.pl	/^sub dircheck {$/;"	s
+dirent	yfs_client.h	/^  struct dirent {$/;"	s	class:yfs_client
+dirinfo	yfs_client.h	/^  struct dirinfo {$/;"	s	class:yfs_client
+dispatch	rpc/rpc.cc	/^rpcs::dispatch(djob_t *j)$/;"	f	class:rpcs
+dispatchpool_	rpc/rpc.h	/^	ThrPool* dispatchpool_;$/;"	m	class:rpcs
+djob_t	rpc/rpc.h	/^		djob_t (connection *c, char *b, int bsz):buf(b),sz(bsz),conn(c) {}$/;"	f	struct:rpcs::djob_t
+djob_t	rpc/rpc.h	/^	struct djob_t {$/;"	s	class:rpcs
+do_worker	rpc/thr_pool.cc	/^do_worker(void *arg)$/;"	f	file:
+done	rpc/rpc.h	/^			bool done;$/;"	m	struct:rpcc::caller
+dst	lock_demo.cc	/^std::string dst;$/;"	v
+dst	lock_tester.cc	/^std::string dst;$/;"	v
+dst	rpc/rpctest.cc	/^struct sockaddr_in dst; \/\/server's ip address$/;"	v	typeref:struct:sockaddr_in
+dst_	rpc/rpc.h	/^		sockaddr_in dst_;$/;"	m	class:rpcc
+dup_req_	rpc/rpc.h	/^                struct request dup_req_;$/;"	m	class:rpcc	typeref:struct:rpcc::request
+ec	yfs_client.h	/^  extent_client *ec;$/;"	m	class:yfs_client
+enq	rpc/fifo.h	/^fifo<T>::enq(T e, bool blocking)$/;"	f	class:fifo
+extent_client	extent_client.cc	/^extent_client::extent_client(std::string dst)$/;"	f	class:extent_client
+extent_client	extent_client.h	/^class extent_client {$/;"	c
+extent_client_h	extent_client.h	4;"	d
+extent_protocol	extent_protocol.h	/^class extent_protocol {$/;"	c
+extent_protocol_h	extent_protocol.h	4;"	d
+extent_server	GNUmakefile	/^extent_server=extent_server.cc extent_smain.cc$/;"	m
+extent_server	extent_server.cc	/^extent_server::extent_server() {}$/;"	f	class:extent_server
+extent_server	extent_server.h	/^class extent_server {$/;"	c
+extent_server_h	extent_server.h	4;"	d
+extentid_t	extent_protocol.h	/^  typedef unsigned long long extentid_t;$/;"	t	class:extent_protocol
+f	rpc/thr_pool.h	/^			void *(*f)(void *); \/\/function point$/;"	m	struct:ThrPool::job_t
+failure_test	rpc/rpctest.cc	/^failure_test()$/;"	f
+fd_	rpc/connection.h	/^		const int fd_;$/;"	m	class:connection
+fdstatus_	rpc/pollmgr.h	/^		int fdstatus_[MAX_POLL_FDS];$/;"	m	class:EPollAIO
+fifo	rpc/fifo.h	/^class fifo {$/;"	c
+fifo	rpc/fifo.h	/^fifo<T>::fifo(int limit) : max_(limit)$/;"	f	class:fifo
+fifo_h	rpc/fifo.h	2;"	d
+fileinfo	yfs_client.h	/^  struct fileinfo {$/;"	s	class:yfs_client
+filename	yfs_client.cc	/^yfs_client::filename(inum inum)$/;"	f	class:yfs_client
+free_reply_window	rpc/rpc.cc	/^rpcs::free_reply_window(void)$/;"	f	class:rpcs
+fuseserver_create	fuse.cc	/^fuseserver_create(fuse_req_t req, fuse_ino_t parent, const char *name,$/;"	f
+fuseserver_createhelper	fuse.cc	/^fuseserver_createhelper(fuse_ino_t parent, const char *name,$/;"	f
+fuseserver_getattr	fuse.cc	/^fuseserver_getattr(fuse_req_t req, fuse_ino_t ino,$/;"	f
+fuseserver_lookup	fuse.cc	/^fuseserver_lookup(fuse_req_t req, fuse_ino_t parent, const char *name)$/;"	f
+fuseserver_mkdir	fuse.cc	/^fuseserver_mkdir(fuse_req_t req, fuse_ino_t parent, const char *name,$/;"	f
+fuseserver_mknod	fuse.cc	/^void fuseserver_mknod( fuse_req_t req, fuse_ino_t parent, $/;"	f
+fuseserver_open	fuse.cc	/^fuseserver_open(fuse_req_t req, fuse_ino_t ino,$/;"	f
+fuseserver_oper	fuse.cc	/^struct fuse_lowlevel_ops fuseserver_oper;$/;"	v	typeref:struct:fuse_lowlevel_ops
+fuseserver_read	fuse.cc	/^fuseserver_read(fuse_req_t req, fuse_ino_t ino, size_t size,$/;"	f
+fuseserver_readdir	fuse.cc	/^fuseserver_readdir(fuse_req_t req, fuse_ino_t ino, size_t size,$/;"	f
+fuseserver_setattr	fuse.cc	/^fuseserver_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,$/;"	f
+fuseserver_statfs	fuse.cc	/^fuseserver_statfs(fuse_req_t req)$/;"	f
+fuseserver_unlink	fuse.cc	/^fuseserver_unlink(fuse_req_t req, fuse_ino_t parent, const char *name)$/;"	f
+fuseserver_write	fuse.cc	/^fuseserver_write(fuse_req_t req, fuse_ino_t ino,$/;"	f
+get	extent_client.cc	/^extent_client::get(extent_protocol::extentid_t eid, std::string &buf)$/;"	f	class:extent_client
+get	extent_protocol.h	/^    get,$/;"	e	enum:extent_protocol::rpc_numbers
+get	extent_server.cc	/^int extent_server::get(extent_protocol::extentid_t id, std::string &buf)$/;"	f	class:extent_server
+get_content	rpc/marshall.h	/^		std::string get_content() { $/;"	f	class:marshall
+get_refconn	rpc/rpc.cc	/^rpcc::get_refconn(connection **ch)$/;"	f	class:rpcc
+getattr	extent_client.cc	/^extent_client::getattr(extent_protocol::extentid_t eid, $/;"	f	class:extent_client
+getattr	extent_protocol.h	/^    getattr,$/;"	e	enum:extent_protocol::rpc_numbers
+getattr	extent_server.cc	/^int extent_server::getattr(extent_protocol::extentid_t id, extent_protocol::attr &a)$/;"	f	class:extent_server
+getattr	fuse.cc	/^getattr(yfs_client::inum inum, struct stat &st)$/;"	f
+getdir	yfs_client.cc	/^yfs_client::getdir(inum inum, dirinfo &din)$/;"	f	class:yfs_client
+getfile	yfs_client.cc	/^yfs_client::getfile(inum inum, fileinfo &fin)$/;"	f	class:yfs_client
+gettime_h	gettime.h	2;"	d
+got_pdu	rpc/rpc.cc	/^rpcc::got_pdu(connection *c, char *b, int sz)$/;"	f	class:rpcc
+got_pdu	rpc/rpc.cc	/^rpcs::got_pdu(connection *c, char *b, int sz)$/;"	f	class:rpcs
+handin_file	GNUmakefile	/^handin_file=$(shell whoami)-lab$(LAB).tgz$/;"	m
+handin_ignore	GNUmakefile	/^handin_ignore=$(clean_files) core* *log$/;"	m
+handle_22	rpc/rpctest.cc	/^srv::handle_22(const std::string a, std::string b, std::string &r)$/;"	f	class:srv
+handle_bigrep	rpc/rpctest.cc	/^srv::handle_bigrep(const int len, std::string &r)$/;"	f	class:srv
+handle_fast	rpc/rpctest.cc	/^srv::handle_fast(const int a, int &r)$/;"	f	class:srv
+handle_slow	rpc/rpctest.cc	/^srv::handle_slow(const int a, int &r)$/;"	f	class:srv
+handler	rpc/rpc.h	/^		handler() { }$/;"	f	class:handler
+handler	rpc/rpc.h	/^class handler {$/;"	c
+has_callback	rpc/pollmgr.cc	/^PollMgr::has_callback(int fd, poll_flag flag, aio_callback *c)$/;"	f	class:PollMgr
+has_space_c_	rpc/fifo.h	/^		pthread_cond_t has_space_c_; \/\/ q is not longer overfull$/;"	m	class:fifo
+hfiles1	GNUmakefile	/^hfiles1=rpc\/fifo.h rpc\/connection.h rpc\/rpc.h rpc\/marshall.h rpc\/method_thread.h\\$/;"	m
+hfiles2	GNUmakefile	/^hfiles2=yfs_client.h extent_client.h extent_protocol.h extent_server.h$/;"	m
+hfiles3	GNUmakefile	/^hfiles3=lock_client_cache.h lock_server_cache.h handle.h tprintf.h$/;"	m
+hfiles4	GNUmakefile	/^hfiles4=log.h rsm.h rsm_protocol.h config.h paxos.h paxos_protocol.h rsm_state_transfer.h rsmtest_client.h tprintf.h$/;"	m
+hfiles5	GNUmakefile	/^hfiles5=rsm_state_transfer.h rsm_client.h$/;"	m
+highfds_	rpc/pollmgr.h	/^		int highfds_;$/;"	m	class:SelectAIO
+id	fuse.cc	/^int id() { $/;"	f
+id	rpc/rpc.h	/^		unsigned int id() { return clt_nonce_; }$/;"	f	class:rpcc
+incref	rpc/connection.cc	/^connection::incref()$/;"	f	class:connection
+ind	rpc/marshall.h	/^		int ind() { return _ind;}$/;"	f	class:unmarshall
+instance	rpc/pollmgr.cc	/^PollMgr *PollMgr::instance = NULL;$/;"	m	class:PollMgr	file:
+instance	rpc/pollmgr.h	/^		static PollMgr *instance;$/;"	m	class:PollMgr
+intret	rpc/rpc.h	/^			int intret;$/;"	m	struct:rpcc::caller
+inum	yfs_client.h	/^    yfs_client::inum inum;$/;"	m	struct:yfs_client::dirent
+inum	yfs_client.h	/^  typedef unsigned long long inum;$/;"	t	class:yfs_client
+is_watched	rpc/pollmgr.cc	/^EPollAIO::is_watched(int fd, poll_flag flag)$/;"	f	class:EPollAIO
+is_watched	rpc/pollmgr.cc	/^SelectAIO::is_watched(int fd, poll_flag flag)$/;"	f	class:SelectAIO
+isdead	rpc/connection.cc	/^connection::isdead()$/;"	f	class:connection
+isdir	yfs_client.cc	/^yfs_client::isdir(inum inum)$/;"	f	class:yfs_client
+isfile	yfs_client.cc	/^yfs_client::isfile(inum inum)$/;"	f	class:yfs_client
+islossy	rpc/rpc.h	/^                int islossy() { return lossytest_ > 0; }$/;"	f	class:rpcc
+isvalid	rpc/rpc.h	/^                    bool isvalid() { return xid != -1; }$/;"	f	struct:rpcc::request
+job_t	rpc/thr_pool.h	/^		struct job_t {$/;"	s	class:ThrPool
+jobq_	rpc/thr_pool.h	/^		fifo<job_t> jobq_;$/;"	m	class:ThrPool
+jsl_log	rpc/jsl_log.h	14;"	d
+jsl_set_debug	rpc/jsl_log.cc	/^jsl_set_debug(int level) {$/;"	f
+labdir	GNUmakefile	/^labdir=$(shell basename $(PWD))$/;"	m
+lc	lock_demo.cc	/^lock_client *lc;$/;"	v
+lc	lock_tester.cc	/^lock_client **lc = new lock_client * [nt];$/;"	v
+lcond	lock_protocol.h	/^	pthread_cond_t lcond;$/;"	m	class:lock
+lid	lock_protocol.h	/^	lock_protocol::lockid_t lid;$/;"	m	class:lock
+listener_	rpc/rpc.h	/^	tcpsconn* listener_;$/;"	m	class:rpcs
+livecheck	test-lab-2-a.pl	/^sub livecheck {$/;"	s
+lock	lock_protocol.h	/^class lock {$/;"	c
+lock	lock_server.cc	/^lock::lock(lock_protocol::lockid_t lid):$/;"	f	class:lock
+lock	lock_server.cc	/^lock::lock(lock_protocol::lockid_t lid, int stat):$/;"	f	class:lock
+lock_client	lock_client.cc	/^lock_client::lock_client(std::string dst)$/;"	f	class:lock_client
+lock_client	lock_client.h	/^class lock_client {$/;"	c
+lock_client_h	lock_client.h	4;"	d
+lock_demo	GNUmakefile	/^lock_demo=lock_demo.cc lock_client.cc$/;"	m
+lock_protocol	lock_protocol.h	/^class lock_protocol {$/;"	c
+lock_protocol_h	lock_protocol.h	4;"	d
+lock_server	GNUmakefile	/^lock_server=lock_server.cc lock_smain.cc$/;"	m
+lock_server	lock_server.cc	/^lock_server::lock_server():$/;"	f	class:lock_server
+lock_server	lock_server.h	/^class lock_server {$/;"	c
+lock_server_h	lock_server.h	5;"	d
+lock_status	lock_protocol.h	/^    enum lock_status {FREE, LOCKED};$/;"	g	class:lock
+lock_tester	GNUmakefile	/^lock_tester=lock_tester.cc lock_client.cc$/;"	m
+lockid_t	lock_protocol.h	/^  typedef unsigned long long lockid_t;$/;"	t	class:lock_protocol
+lockmap	lock_server.h	/^  std::map<lock_protocol::lockid_t, lock* > lockmap;$/;"	m	class:lock_server
+lookup	yfs_client.cc	/^yfs_client::lookup(inum parent, const char *name, inum &inum, bool *found) $/;"	f	class:yfs_client
+lossy	rpc/connection.h	/^	int lossy;$/;"	m	struct:bundle
+lossy_	rpc/connection.h	/^		const int lossy_;$/;"	m	class:connection
+lossy_	rpc/connection.h	/^		int lossy_;$/;"	m	class:tcpsconn
+lossy_test	rpc/rpctest.cc	/^lossy_test()$/;"	f
+lossytest_	rpc/rpc.h	/^		int lossytest_;$/;"	m	class:rpcc
+lossytest_	rpc/rpc.h	/^	int lossytest_; $/;"	m	class:rpcs
+m	rpc/method_thread.h	/^				void (C::*m)(A1 a1, A2 a2);$/;"	m	class:__anon4::XXX
+m	rpc/rpc.h	/^			pthread_mutex_t m;$/;"	m	struct:rpcc::caller
+m_	rpc/connection.h	/^		pthread_mutex_t m_;$/;"	m	class:connection
+m_	rpc/connection.h	/^		pthread_mutex_t m_;$/;"	m	class:tcpsconn
+m_	rpc/fifo.h	/^		pthread_mutex_t m_;$/;"	m	class:fifo
+m_	rpc/pollmgr.h	/^		pthread_mutex_t m_;$/;"	m	class:PollMgr
+m_	rpc/pollmgr.h	/^		pthread_mutex_t m_;$/;"	m	class:SelectAIO
+m_	rpc/rpc.h	/^		pthread_mutex_t m_; \/\/ protect insert\/delete to calls[]$/;"	m	class:rpcc
+m_	rpc/slock.h	/^		pthread_mutex_t *m_;$/;"	m	struct:ScopedLock
+main	extent_smain.cc	/^main(int argc, char *argv[])$/;"	f
+main	fuse.cc	/^main(int argc, char *argv[])$/;"	f
+main	lock_demo.cc	/^main(int argc, char *argv[])$/;"	f
+main	lock_smain.cc	/^main(int argc, char *argv[])$/;"	f
+main	lock_tester.cc	/^main(int argc, char *argv[])$/;"	f
+main	rpc/rpctest.cc	/^main(int argc, char *argv[])$/;"	f
+make_sockaddr	rpc/rpc.cc	/^make_sockaddr(const char *host, const char *port, struct sockaddr_in *dst){$/;"	f
+make_sockaddr	rpc/rpc.cc	/^make_sockaddr(const char *hostandport, struct sockaddr_in *dst){$/;"	f
+marshall	rpc/marshall.h	/^		marshall() {$/;"	f	class:marshall
+marshall	rpc/marshall.h	/^class marshall {$/;"	c
+marshall_h	rpc/marshall.h	2;"	d
+max_	rpc/fifo.h	/^		unsigned int max_; \/\/maximum capacity of the queue, block enq threads if exceeds this limit$/;"	m	class:fifo
+method_thread	rpc/method_thread.h	/^method_thread(C *o, bool detach, void (C::*m)())$/;"	f
+method_thread	rpc/method_thread.h	/^method_thread(C *o, bool detach, void (C::*m)(A), A a)$/;"	f
+method_thread	rpc/method_thread.h	/^method_thread(C *o, bool detach, void (C::*m)(A1 , A2 ), A1 a1, A2 a2)$/;"	f
+method_thread	rpc/method_thread.h	/^method_thread(C *o, bool detach, void (C::*m)(A1 , A2, A3 ), A1 a1, A2 a2, A3 a3)$/;"	f
+method_thread_child	rpc/method_thread.h	/^method_thread_child()$/;"	f
+method_thread_h	rpc/method_thread.h	2;"	d
+method_thread_parent	rpc/method_thread.h	/^method_thread_parent(void *(*fn)(void *), void *arg, bool detach)$/;"	f
+mgr	rpc/connection.h	/^	chanmgr *mgr;$/;"	m	struct:bundle
+mgr_	rpc/connection.h	/^		chanmgr *mgr_;$/;"	m	class:connection
+mgr_	rpc/connection.h	/^		chanmgr *mgr_;$/;"	m	class:tcpsconn
+min	fuse.cc	341;"	d	file:
+mtime	extent_protocol.h	/^    unsigned int mtime;$/;"	m	struct:extent_protocol::attr
+mtime	yfs_client.h	/^    unsigned long mtime;$/;"	m	struct:yfs_client::dirinfo
+mtime	yfs_client.h	/^    unsigned long mtime;$/;"	m	struct:yfs_client::fileinfo
+mutex	lock_server.h	/^  pthread_mutex_t mutex;$/;"	m	class:lock_server
+myid	fuse.cc	/^int myid;$/;"	v
+n2i	yfs_client.cc	/^yfs_client::n2i(std::string n)$/;"	f	class:yfs_client
+nacquire	lock_server.h	/^  int nacquire;$/;"	m	class:lock_server
+name	yfs_client.h	/^    std::string name;$/;"	m	struct:yfs_client::dirent
+non_empty_c_	rpc/fifo.h	/^		pthread_cond_t non_empty_c_; \/\/ q went non-empty$/;"	m	class:fifo
+nonce_	rpc/rpc.h	/^	unsigned int nonce_;$/;"	m	class:rpcs
+nt	lock_tester.cc	/^int nt = 6; \/\/XXX: lab1's rpc handlers are blocking. Since rpcs uses a thread pool of 10 threads, we cannot test more than 10 blocking rpc.$/;"	v
+nthreads_	rpc/thr_pool.h	/^		int nthreads_;$/;"	m	class:ThrPool
+o	rpc/method_thread.h	/^				C *o;$/;"	m	class:__anon4::XXX
+ok	rpc/marshall.h	/^		bool ok() { return _ok; }$/;"	f	class:unmarshall
+okdone	rpc/rpc.cc	/^unmarshall::okdone()$/;"	f	class:unmarshall
+oldsrv_failure	rpc/rpc.h	/^		static const int oldsrv_failure = -5;$/;"	m	class:rpc_const
+operator <	rpc/rpc.cc	/^bool operator<(const sockaddr_in &a, const sockaddr_in &b){$/;"	f
+operator <<	extent_protocol.h	/^operator<<(marshall &m, extent_protocol::attr a)$/;"	f
+operator <<	rpc/marshall.h	/^operator<<(marshall &m, const std::map<A,B> &d) {$/;"	f
+operator <<	rpc/marshall.h	/^operator<<(marshall &m, std::vector<C> v)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, bool x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, char x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, const std::string &s)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, int x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, short x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, unsigned char x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, unsigned int x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, unsigned long long x)$/;"	f
+operator <<	rpc/rpc.cc	/^operator<<(marshall &m, unsigned short x)$/;"	f
+operator >>	extent_protocol.h	/^operator>>(unmarshall &u, extent_protocol::attr &a)$/;"	f
+operator >>	rpc/marshall.h	/^operator>>(unmarshall &u, std::map<A,B> &d) {$/;"	f
+operator >>	rpc/marshall.h	/^operator>>(unmarshall &u, std::vector<C> &v)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, bool &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, char &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, int &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, short &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, std::string &s)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, unsigned char &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, unsigned int &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, unsigned long long &x)$/;"	f
+operator >>	rpc/rpc.cc	/^operator>>(unmarshall &u, unsigned short &x)$/;"	f
+p	fuse.cc	/^    char *p;$/;"	m	struct:dirbuf	file:
+pack	rpc/rpc.cc	/^marshall::pack(int x)$/;"	f	class:marshall
+pack_reply_header	rpc/marshall.h	/^		void pack_reply_header(const reply_header &h) {$/;"	f	class:marshall
+pack_req_header	rpc/marshall.h	/^		void pack_req_header(const req_header &h) {$/;"	f	class:marshall
+pending_change_	rpc/pollmgr.h	/^		bool pending_change_;$/;"	m	class:PollMgr
+pipe_	rpc/connection.h	/^		int pipe_[2];$/;"	m	class:tcpsconn
+pipefd_	rpc/pollmgr.h	/^		int pipefd_[2];$/;"	m	class:SelectAIO
+poll_flag	rpc/pollmgr.h	/^} poll_flag;$/;"	t	typeref:enum:__anon2
+poll_flag_to_event	rpc/pollmgr.cc	/^int poll_flag_to_event(poll_flag flag)$/;"	f	file:
+pollfd_	rpc/pollmgr.h	/^		int pollfd_;$/;"	m	class:EPollAIO
+pollmgr_h	rpc/pollmgr.h	2;"	d
+pollmgr_is_initialized	rpc/pollmgr.cc	/^static pthread_once_t pollmgr_is_initialized = PTHREAD_ONCE_INIT;$/;"	v	file:
+port	rpc/rpctest.cc	/^int port;$/;"	v
+port_	rpc/rpc.h	/^	int port_;$/;"	m	class:rpcs
+proc	rpc/marshall.h	/^	int proc;$/;"	m	struct:req_header
+process_accept	rpc/connection.cc	/^tcpsconn::process_accept()$/;"	f	class:tcpsconn
+procs_	rpc/rpc.h	/^	std::map<int, handler *> procs_;$/;"	m	class:rpcs
+procs_m_	rpc/rpc.h	/^	pthread_mutex_t procs_m_; \/\/ protect insert\/delete to procs[]$/;"	m	class:rpcs
+put	extent_client.cc	/^extent_client::put(extent_protocol::extentid_t eid, std::string buf)$/;"	f	class:extent_client
+put	extent_protocol.h	/^    put = 0x6001,$/;"	e	enum:extent_protocol::rpc_numbers
+put	extent_server.cc	/^int extent_server::put(extent_protocol::extentid_t id, std::string buf, int &)$/;"	f	class:extent_server
+q_	rpc/fifo.h	/^		std::list<T> q_;$/;"	m	class:fifo
+random_inum	yfs_client.cc	/^yfs_client::random_inum(bool isfile)$/;"	f	class:yfs_client
+rawbyte	rpc/rpc.cc	/^marshall::rawbyte(unsigned char x)$/;"	f	class:marshall
+rawbyte	rpc/rpc.cc	/^unmarshall::rawbyte()$/;"	f	class:unmarshall
+rawbytes	rpc/rpc.cc	/^marshall::rawbytes(const char *p, int n)$/;"	f	class:marshall
+rawbytes	rpc/rpc.cc	/^unmarshall::rawbytes(std::string &ss, unsigned int n)$/;"	f	class:unmarshall
+reachable_	rpc/rpc.h	/^		bool reachable_;$/;"	m	class:rpcc
+reachable_	rpc/rpc.h	/^	bool reachable_;$/;"	m	class:rpcs
+read	yfs_client.cc	/^yfs_client::read(inum inum, off_t off, size_t size, std::string &buf)$/;"	f	class:yfs_client
+read_cb	rpc/connection.cc	/^connection::read_cb(int s)$/;"	f	class:connection
+readdir	yfs_client.cc	/^yfs_client::readdir(inum inum, std::list<dirent> &dirents) $/;"	f	class:yfs_client
+readpdu	rpc/connection.cc	/^connection::readpdu()$/;"	f	class:connection
+ready_	rpc/pollmgr.h	/^		struct epoll_event ready_[MAX_POLL_FDS];$/;"	m	class:EPollAIO	typeref:struct:EPollAIO::epoll_event
+ref	rpc/connection.cc	/^connection::ref()$/;"	f	class:connection
+ref_m_	rpc/connection.h	/^		pthread_mutex_t ref_m_;$/;"	m	class:connection
+refno_	rpc/connection.h	/^		int refno_;$/;"	m	class:connection
+reg	rpc/rpc.h	/^rpcs::reg(unsigned int proc, S*sob, int (S::*meth)(const A1 a1, R & r))$/;"	f	class:rpcs
+reg	rpc/rpc.h	/^rpcs::reg(unsigned int proc, S*sob, int (S::*meth)(const A1 a1, const A2 a2, $/;"	f	class:rpcs
+reg1	rpc/rpc.cc	/^rpcs::reg1(unsigned int proc, handler *h)$/;"	f	class:rpcs
+release	lock_client.cc	/^lock_client::release(lock_protocol::lockid_t lid)$/;"	f	class:lock_client
+release	lock_protocol.h	/^    release,$/;"	e	enum:lock_protocol::rpc_numbers
+release	lock_server.cc	/^lock_server::release(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
+remove	extent_client.cc	/^extent_client::remove(extent_protocol::extentid_t eid)$/;"	f	class:extent_client
+remove	extent_protocol.h	/^    remove$/;"	e	enum:extent_protocol::rpc_numbers
+remove	extent_server.cc	/^int extent_server::remove(extent_protocol::extentid_t id, int &)$/;"	f	class:extent_server
+reply_buf_limited	fuse.cc	/^int reply_buf_limited(fuse_req_t req, const char *buf, size_t bufsize,$/;"	f
+reply_header	rpc/marshall.h	/^	reply_header(int x=0, int r=0): xid(x), ret(r) {}$/;"	f	struct:reply_header
+reply_header	rpc/marshall.h	/^struct reply_header {$/;"	s
+reply_t	rpc/rpc.h	/^		reply_t (unsigned int _xid) {$/;"	f	struct:rpcs::reply_t
+reply_t	rpc/rpc.h	/^	struct reply_t {$/;"	s	class:rpcs
+reply_window_	rpc/rpc.h	/^	std::map<unsigned int, std::list<reply_t> > reply_window_;$/;"	m	class:rpcs
+reply_window_m_	rpc/rpc.h	/^	pthread_mutex_t reply_window_m_; \/\/ protect reply window et al$/;"	m	class:rpcs
+req_header	rpc/marshall.h	/^	req_header(int x=0, int p=0, int c = 0, int s = 0, int xi = 0):$/;"	f	struct:req_header
+req_header	rpc/marshall.h	/^struct req_header {$/;"	s
+request	rpc/rpc.h	/^                    request() { clear(); }$/;"	f	struct:rpcc::request
+request	rpc/rpc.h	/^                struct request {$/;"	s	class:rpcc
+ret	rpc/marshall.h	/^	int ret;$/;"	m	struct:reply_header
+retrans_	rpc/rpc.h	/^		bool retrans_;$/;"	m	class:rpcc
+rfds_	rpc/pollmgr.h	/^		fd_set rfds_;$/;"	m	class:SelectAIO
+rpc_checksum_t	rpc/marshall.h	/^typedef uint64_t rpc_checksum_t;$/;"	t
+rpc_const	rpc/rpc.h	/^class rpc_const {$/;"	c
+rpc_h	rpc/rpc.h	2;"	d
+rpc_numbers	extent_protocol.h	/^  enum rpc_numbers {$/;"	g	class:extent_protocol
+rpc_numbers	lock_protocol.h	/^  enum rpc_numbers {$/;"	g	class:lock_protocol
+rpc_sz_t	rpc/marshall.h	/^typedef int rpc_sz_t;$/;"	t
+rpcbind	rpc/rpc.cc	/^rpcs::rpcbind(int a, int &r)$/;"	f	class:rpcs
+rpcc	rpc/rpc.cc	/^rpcc::rpcc(sockaddr_in d, bool retrans) : $/;"	f	class:rpcc
+rpcc	rpc/rpc.h	/^class rpcc : public chanmgr {$/;"	c
+rpclib	GNUmakefile	/^rpclib=rpc\/rpc.cc rpc\/connection.cc rpc\/pollmgr.cc rpc\/thr_pool.cc rpc\/jsl_log.cc gettime.cc$/;"	m
+rpcs	rpc/rpc.cc	/^rpcs::rpcs(unsigned int p1, int count)$/;"	f	class:rpcs
+rpcs	rpc/rpc.h	/^class rpcs : public chanmgr {$/;"	c
+rpcstate_t	rpc/rpc.h	/^	} rpcstate_t;$/;"	t	class:rpcs	typeref:enum:rpcs::__anon5
+rpctest	GNUmakefile	/^rpc\/rpctest=rpc\/rpctest.cc$/;"	m
+rpdu_	rpc/connection.h	/^		charbuf rpdu_;$/;"	m	class:connection
+rsm_files	GNUmakefile	/^rsm_files = rsm.cc paxos.cc config.cc log.cc handle.cc$/;"	m
+rsm_tester	GNUmakefile	/^rsm_tester=rsm_tester.cc rsmtest_client.cc$/;"	m
+send	rpc/connection.cc	/^connection::send(char *b, int sz)$/;"	f	class:connection
+send_complete_	rpc/connection.h	/^		pthread_cond_t send_complete_;$/;"	m	class:connection
+send_wait_	rpc/connection.h	/^		pthread_cond_t send_wait_;$/;"	m	class:connection
+server	rpc/rpctest.cc	/^rpcs *server;  \/\/ server rpc object$/;"	v
+service	rpc/rpctest.cc	/^srv service;$/;"	v
+set_rand_seed	rpc/rpc.cc	/^void set_rand_seed()$/;"	f
+set_reachable	rpc/rpc.h	/^		void set_reachable(bool r) { reachable_ = r; }$/;"	f	class:rpcc
+set_reachable	rpc/rpc.h	/^	void set_reachable(bool r) { reachable_ = r; }$/;"	f	class:rpcs
+setattr	yfs_client.cc	/^yfs_client::setattr(inum inum, struct stat *attr)$/;"	f	class:yfs_client
+simple_tests	rpc/rpctest.cc	/^simple_tests(rpcc *c)$/;"	f
+size	extent_protocol.h	/^    unsigned int size;$/;"	m	struct:extent_protocol::attr
+size	fuse.cc	/^    size_t size;$/;"	m	struct:dirbuf	file:
+size	rpc/fifo.h	/^fifo<T>::size()$/;"	f	class:fifo
+size	rpc/marshall.h	/^		int size() { return _ind;}$/;"	f	class:marshall
+size	rpc/marshall.h	/^		int size() { return _sz;}$/;"	f	class:unmarshall
+size	yfs_client.h	/^    unsigned long long size;$/;"	m	struct:yfs_client::fileinfo
+solong	rpc/connection.h	/^			int solong; \/\/amount of bytes written or read so far$/;"	m	struct:connection::charbuf
+srv	rpc/rpctest.cc	/^class srv {$/;"	c	file:
+srv_nonce	rpc/marshall.h	/^	unsigned int srv_nonce;$/;"	m	struct:req_header
+srv_nonce_	rpc/rpc.h	/^		unsigned int srv_nonce_;$/;"	m	class:rpcc
+startserver	rpc/rpctest.cc	/^void startserver()$/;"	f
+stat	lock_client.cc	/^lock_client::stat(lock_protocol::lockid_t lid)$/;"	f	class:lock_client
+stat	lock_protocol.h	/^    stat$/;"	e	enum:lock_protocol::rpc_numbers
+stat	lock_server.cc	/^lock_server::stat(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
+static_max	lang/algorithm.h	/^struct static_max$/;"	s
+static_min	lang/algorithm.h	/^struct static_min$/;"	s
+status	extent_protocol.h	/^  typedef int status;$/;"	t	class:extent_protocol
+status	lock_protocol.h	/^	int status;$/;"	m	class:lock
+status	lock_protocol.h	/^  typedef int status;$/;"	t	class:lock_protocol
+status	yfs_client.h	/^  typedef int status;$/;"	t	class:yfs_client
+str	rpc/marshall.h	/^		std::string str() {$/;"	f	class:marshall
+sz	rpc/connection.h	/^			int sz;$/;"	m	struct:connection::charbuf
+sz	rpc/rpc.h	/^		int sz;         \/\/ the size of reply buffer$/;"	m	struct:rpcs::reply_t
+sz	rpc/rpc.h	/^		int sz;$/;"	m	struct:rpcs::djob_t
+takeJob	rpc/thr_pool.cc	/^ThrPool::takeJob(job_t *j)$/;"	f	class:ThrPool
+take_buf	rpc/marshall.h	/^		void take_buf(char **b, int *s) {$/;"	f	class:marshall
+take_buf	rpc/marshall.h	/^		void take_buf(char **b, int *sz) {$/;"	f	class:unmarshall
+take_content	rpc/marshall.h	/^		void take_content(const std::string &s) {$/;"	f	class:unmarshall
+take_in	rpc/rpc.cc	/^unmarshall::take_in(unmarshall &another)$/;"	f	class:unmarshall
+tcp	rpc/connection.h	/^	int tcp;$/;"	m	struct:bundle
+tcp_	rpc/connection.h	/^		int tcp_; \/\/file desciptor for accepting connection$/;"	m	class:tcpsconn
+tcpsconn	rpc/connection.cc	/^tcpsconn::tcpsconn(chanmgr *m1, int port, int lossytest) $/;"	f	class:tcpsconn
+tcpsconn	rpc/connection.h	/^class tcpsconn {$/;"	c
+test-lab-3-b	GNUmakefile	/^test-lab-3-b=test-lab-3-b.c$/;"	m
+test-lab-3-c	GNUmakefile	/^test-lab-3-c=test-lab-3-c.c$/;"	m
+test1	lock_tester.cc	/^test1(void)$/;"	f
+test2	lock_tester.cc	/^test2(void *x) $/;"	f
+test3	lock_tester.cc	/^test3(void *x)$/;"	f
+test4	lock_tester.cc	/^test4(void *x)$/;"	f
+test5	lock_tester.cc	/^test5(void *x)$/;"	f
+testmarshall	rpc/rpctest.cc	/^testmarshall()$/;"	f
+th_	rpc/connection.h	/^		pthread_t th_;$/;"	m	class:tcpsconn
+th_	rpc/pollmgr.h	/^		pthread_t th_;$/;"	m	class:PollMgr
+th_	rpc/thr_pool.h	/^		std::vector<pthread_t> th_;$/;"	m	class:ThrPool
+timeout_failure	rpc/rpc.h	/^		static const int timeout_failure = -1;$/;"	m	class:rpc_const
+to	rpc/rpc.h	/^			int to;$/;"	m	struct:rpcc::TO
+to	rpc/rpc.h	/^		static TO to(int x) { TO t; t.to = x; return t;}$/;"	f	class:rpcc
+to_max	rpc/rpc.cc	/^const rpcc::TO rpcc::to_max = { 120000 };$/;"	m	class:rpcc	file:
+to_max	rpc/rpc.h	/^		static const TO to_max;$/;"	m	class:rpcc
+to_min	rpc/rpc.cc	/^const rpcc::TO rpcc::to_min = { 1000 };$/;"	m	class:rpcc	file:
+to_min	rpc/rpc.h	/^		static const TO to_min;$/;"	m	class:rpcc
+un	rpc/rpc.h	/^			unmarshall *un;$/;"	m	struct:rpcc::caller
+unmarshal_args_failure	rpc/rpc.h	/^		static const int unmarshal_args_failure = -2;$/;"	m	class:rpc_const
+unmarshal_reply_failure	rpc/rpc.h	/^		static const int unmarshal_reply_failure = -3;$/;"	m	class:rpc_const
+unmarshall	rpc/marshall.h	/^		unmarshall(): _buf(NULL),_sz(0),_ind(0),_ok(false) {}$/;"	f	class:unmarshall
+unmarshall	rpc/marshall.h	/^		unmarshall(char *b, int sz): _buf(b),_sz(sz),_ind(),_ok(true) {}$/;"	f	class:unmarshall
+unmarshall	rpc/marshall.h	/^		unmarshall(const std::string &s) : _buf(NULL),_sz(0),_ind(0),_ok(false) $/;"	f	class:unmarshall
+unmarshall	rpc/marshall.h	/^class unmarshall {$/;"	c
+unpack	rpc/rpc.cc	/^unmarshall::unpack(int *x)$/;"	f	class:unmarshall
+unpack_reply_header	rpc/marshall.h	/^		void unpack_reply_header(reply_header *h) {$/;"	f	class:unmarshall
+unpack_req_header	rpc/marshall.h	/^		void unpack_req_header(req_header *h) {$/;"	f	class:unmarshall
+unwatch_fd	rpc/pollmgr.cc	/^EPollAIO::unwatch_fd(int fd, poll_flag flag)$/;"	f	class:EPollAIO
+unwatch_fd	rpc/pollmgr.cc	/^SelectAIO::unwatch_fd(int fd, poll_flag flag)$/;"	f	class:SelectAIO
+update_xid_rep	rpc/rpc.cc	/^rpcc::update_xid_rep(unsigned int xid)$/;"	f	class:rpcc
+updatestat	rpc/rpc.cc	/^rpcs::updatestat(unsigned int proc)$/;"	f	class:rpcs
+useful	rpc/pollmgr.h	/^		static int useful;$/;"	m	class:PollMgr
+useless	rpc/pollmgr.h	/^		static int useless;$/;"	m	class:PollMgr
+value	lang/algorithm.h	/^    static const int value = A > B ? A : B;$/;"	m	struct:static_max
+verify_client_h	lang/verify.h	4;"	d
+wait_loop	rpc/pollmgr.cc	/^PollMgr::wait_loop()$/;"	f	class:PollMgr
+wait_ready	rpc/pollmgr.cc	/^EPollAIO::wait_ready(std::vector<int> *readable, std::vector<int> *writable)$/;"	f	class:EPollAIO
+wait_ready	rpc/pollmgr.cc	/^SelectAIO::wait_ready(std::vector<int> *readable, std::vector<int> *writable)$/;"	f	class:SelectAIO
+waiters_	rpc/connection.h	/^		int waiters_;$/;"	m	class:connection
+watch_fd	rpc/pollmgr.cc	/^EPollAIO::watch_fd(int fd, poll_flag flag)$/;"	f	class:EPollAIO
+watch_fd	rpc/pollmgr.cc	/^SelectAIO::watch_fd(int fd, poll_flag flag)$/;"	f	class:SelectAIO
+wfds_	rpc/pollmgr.h	/^		fd_set wfds_;$/;"	m	class:SelectAIO
+wpdu_	rpc/connection.h	/^		charbuf wpdu_;$/;"	m	class:connection
+write	yfs_client.cc	/^yfs_client::write(inum inum, off_t off, size_t size, const char *buf)$/;"	f	class:yfs_client
+write_cb	rpc/connection.cc	/^connection::write_cb(int s)$/;"	f	class:connection
+writeat	test-lab-2-b.pl	/^sub writeat {$/;"	s
+writeone	test-lab-2-b.pl	/^sub writeone {$/;"	s
+writepdu	rpc/connection.cc	/^connection::writepdu()$/;"	f	class:connection
+xid	rpc/marshall.h	/^	int xid;$/;"	m	struct:reply_header
+xid	rpc/marshall.h	/^	int xid;$/;"	m	struct:req_header
+xid	rpc/rpc.h	/^			unsigned int xid;$/;"	m	struct:rpcc::caller
+xid	rpc/rpc.h	/^		unsigned int xid;$/;"	m	struct:rpcs::reply_t
+xid	rpc/rpc.h	/^                    int xid;$/;"	m	struct:rpcc::request
+xid_	rpc/rpc.h	/^		unsigned int xid_;$/;"	m	class:rpcc
+xid_rep	rpc/marshall.h	/^	int xid_rep;$/;"	m	struct:req_header
+xid_rep_done_	rpc/rpc.h	/^                int xid_rep_done_;$/;"	m	class:rpcc
+xid_rep_window_	rpc/rpc.h	/^		std::list<unsigned int> xid_rep_window_;$/;"	m	class:rpcc
+xxstatus	extent_protocol.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR };$/;"	g	class:extent_protocol
+xxstatus	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;"	g	class:lock_protocol
+xxstatus	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	g	class:yfs_client
+yfs	fuse.cc	/^yfs_client *yfs;$/;"	v
+yfs_client	GNUmakefile	/^yfs_client=yfs_client.cc extent_client.cc fuse.cc$/;"	m
+yfs_client	yfs_client.cc	/^yfs_client::yfs_client(std::string extent_dst, std::string lock_dst)$/;"	f	class:yfs_client
+yfs_client	yfs_client.h	/^class yfs_client {$/;"	c
+yfs_client_h	yfs_client.h	2;"	d
+yyy	rpc/method_thread.h	/^				static void *yyy(void *vvv) {$/;"	f	class:__anon4::XXX
+~EPollAIO	rpc/pollmgr.cc	/^EPollAIO::~EPollAIO()$/;"	f	class:EPollAIO
+~PollMgr	rpc/pollmgr.cc	/^PollMgr::~PollMgr()$/;"	f	class:PollMgr
+~ScopedLock	rpc/slock.h	/^		~ScopedLock() {$/;"	f	struct:ScopedLock
+~SelectAIO	rpc/pollmgr.cc	/^SelectAIO::~SelectAIO()$/;"	f	class:SelectAIO
+~ThrPool	rpc/thr_pool.cc	/^ThrPool::~ThrPool()$/;"	f	class:ThrPool
+~aio_callback	rpc/pollmgr.h	/^		virtual ~aio_callback() {}$/;"	f	class:aio_callback
+~aio_mgr	rpc/pollmgr.h	/^		virtual ~aio_mgr() {}$/;"	f	class:aio_mgr
+~caller	rpc/rpc.cc	/^rpcc::caller::~caller()$/;"	f	class:rpcc::caller
+~chanmgr	rpc/connection.h	/^		virtual ~chanmgr() {}$/;"	f	class:chanmgr
+~connection	rpc/connection.cc	/^connection::~connection()$/;"	f	class:connection
+~fifo	rpc/fifo.h	/^fifo<T>::~fifo()$/;"	f	class:fifo
+~handler	rpc/rpc.h	/^		virtual ~handler() { }$/;"	f	class:handler
+~lock	lock_protocol.h	/^	~lock(){};$/;"	f	class:lock
+~lock_client	lock_client.h	/^  virtual ~lock_client() {};$/;"	f	class:lock_client
+~lock_server	lock_server.h	/^  ~lock_server() {};$/;"	f	class:lock_server
+~marshall	rpc/marshall.h	/^		~marshall() { $/;"	f	class:marshall
+~rpcc	rpc/rpc.cc	/^rpcc::~rpcc()$/;"	f	class:rpcc
+~rpcs	rpc/rpc.cc	/^rpcs::~rpcs()$/;"	f	class:rpcs
+~tcpsconn	rpc/connection.cc	/^tcpsconn::~tcpsconn()$/;"	f	class:tcpsconn
+~unmarshall	rpc/marshall.h	/^		~unmarshall() {$/;"	f	class:unmarshall
