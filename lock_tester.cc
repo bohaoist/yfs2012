@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "lang/verify.h"
 #include "lock_client_cache.h"
 

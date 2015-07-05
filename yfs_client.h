@@ -11,6 +11,7 @@
 
 class yfs_client {
   extent_client *ec;
+  lock_client *lc;
  public:
 
   typedef unsigned long long inum;
@@ -45,6 +46,29 @@ class yfs_client {
 
   int getfile(inum, fileinfo &);
   int getdir(inum, dirinfo &);
+  int setattr(inum, struct stat *);
+  int read(inum, off_t, size_t, std::string &);
+  int write(inum, off_t, size_t, const char *);
+  inum random_inum(bool);
+  int create(inum, const char *, inum &);
+  int lookup(inum, const char *, inum &, bool *);
+  int readdir(inum, std::list<dirent> &);
+  int mkdir(inum, const char *, mode_t, inum &);
+  int unlink(inum, const char *);
+
 };
 
+class ScopedLockClient {
+	private:
+		lock_client *lc_;
+		lock_protocol::lockid_t lid;
+	public:
+		ScopedLockClient(lock_client *lc, lock_protocol::lockid_t lid):
+			lc_(lc),lid(lid) {
+				lc_->acquire(lid);
+			}
+		~ScopedLockClient() {
+			lc_->release(lid);
+		}
+};
 #endif 
