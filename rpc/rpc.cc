@@ -106,7 +106,6 @@ rpcc::rpcc(sockaddr_in d, bool retrans) :
 	VERIFY(pthread_mutex_init(&m_, 0) == 0);
 	VERIFY(pthread_mutex_init(&chan_m_, 0) == 0);
 	VERIFY(pthread_cond_init(&destroy_wait_c_, 0) == 0);
-
 	if(retrans){
 		set_rand_seed();
 		clt_nonce_ = random();
@@ -190,7 +189,6 @@ int
 rpcc::call1(unsigned int proc, marshall &req, unmarshall &rep,
 		TO to)
 {
-
 	caller ca(0, &rep);
         int xid_rep;
 	{
@@ -214,7 +212,6 @@ rpcc::call1(unsigned int proc, marshall &req, unmarshall &rep,
 		req.pack_req_header(h);
                 xid_rep = xid_rep_window_.front();
 	}
-
 	TO curr_to;
 	struct timespec now, nextdeadline, finaldeadline; 
 
@@ -225,7 +222,7 @@ rpcc::call1(unsigned int proc, marshall &req, unmarshall &rep,
 	bool transmit = true;
 	connection *ch = NULL;
 
-	while (1){
+	while (1) {
 		if(transmit){
 			get_refconn(&ch);
 			if(ch){
