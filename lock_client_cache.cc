@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include "tprintf.h"
 
-
 lock_client_cache::lock_client_cache(std::string xdst, 
 				     class lock_release_user *_lu)
   : lock_client(xdst), lu(_lu)
@@ -106,6 +105,9 @@ lock_client_cache::release(lock_protocol::lockid_t lid)
 		iter->second.state = RELEASING;
 		iter->second.revoked = false;
 		pthread_mutex_unlock(&client_mutex);
+		//for lab5, flush file extent from extent_client to extent_server 
+		lu->dorelease(lid);
+		
 		ret = cl->call(lock_protocol::release, lid, id, r);
 		pthread_mutex_lock(&client_mutex);
 		iter->second.state = NONE;
@@ -136,6 +138,8 @@ lock_client_cache::revoke_handler(lock_protocol::lockid_t lid,
 	if (iter->second.state == FREE) {
 		iter->second.state = RELEASING;
 		pthread_mutex_unlock(&client_mutex);
+		//for lab5, flush file extent from extent client to extent server.
+		lu->dorelease(lid);
 		ret = cl->call(lock_protocol::release, lid, id, r);
 		pthread_mutex_lock(&client_mutex);
 		iter->second.state = NONE;

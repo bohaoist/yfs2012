@@ -8,6 +8,7 @@
 
 #include "lock_protocol.h"
 #include "lock_client.h"
+#include "lock_client_cache.h"
 
 class yfs_client {
   extent_client *ec;
@@ -70,5 +71,14 @@ class ScopedLockClient {
 		~ScopedLockClient() {
 			lc_->release(lid);
 		}
+};
+class lock_user : public lock_release_user {
+	public:
+		lock_user(extent_client_cache *e) : ec(e) {}; 
+		void dorelease(lock_protocol::lockid_t lid) {
+			ec->flush(lid);
+		}
+    private:
+       extent_client_cache *ec;
 };
 #endif 
