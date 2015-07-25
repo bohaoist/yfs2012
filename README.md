@@ -69,27 +69,28 @@ RPC系统维护了线程池,当收到一个请求后,从线程池中选择一个
 对应handler,可能是lock_server中的**acquire**或者**release**.
 下面介绍这两个函数的实现. 在lock_server.cc中**acquire**的实现如下:
 	
-    lock_protocol::status
-	lock_server::acquire(int clt, lock_protocol::lockid_t lid, int &r) 
-	{
-		lock_protocol::status ret = lock_protocol::OK;
-		std::map<lock_protocol::lockid_t, lock* >::iterator iter;
-		pthread_mutex_lock(&mutex);
-		iter = lockmap.find(lid);
-		if(iter != lockmap.end()) {
-			while(iter->second->status != lock::FREE) {
-				pthread_cond_wait(&(iter->second->lcond), &mutex);
-			}
-			iter->second->status = lock::LOCKED;
-			pthread_mutex_unlock(&mutex);
-			return ret;
-		} else {
-			lock *new_lock = new lock(lid, lock::LOCKED);
-			lockmap.insert(std::make_pair(lid, new_lock));
-			pthread_mutex_unlock(&mutex);
-			return ret;
-		}	   
-	}
+       
+         lock_protocol::status
+	    lock_server::acquire(int clt, lock_protocol::lockid_t lid, int &r) 
+	    {
+		    lock_protocol::status ret = lock_protocol::OK;
+		    std::map<lock_protocol::lockid_t, lock* >::iterator iter;
+		    pthread_mutex_lock(&mutex);
+		    iter = lockmap.find(lid);
+		    if(iter != lockmap.end()) {
+			    while(iter->second->status != lock::FREE) {
+				    pthread_cond_wait(&(iter->second->lcond), &mutex);
+			    }
+			    iter->second->status = lock::LOCKED;
+			    pthread_mutex_unlock(&mutex);
+			    return ret;
+		    } else {
+			    lock *new_lock = new lock(lid, lock::LOCKED);
+			    lockmap.insert(std::make_pair(lid, new_lock));
+			    pthread_mutex_unlock(&mutex);
+			    return ret;
+		    }	   
+	    }
 
 因为多线程需要互斥的访问共享的数据结构lockmap.所以首先需要获取mutex.
 然后在lockmap中查询lid对应的锁的状态,如果是LOCKED,那么当前线程在该锁
@@ -782,3 +783,136 @@ ScopedLockClient对象即可. 具体代码可以查看第一部分中给出的�
 ##代码实现
 主要的代码实现在lock_client_cache.h/lock_client_cache.cc,lock_server_cache.h/lock_server_cache.cc和
 lock_smain.cc文件中.
+
+#Lab 5: Caching Extents
+##简介
+这次实验实在文件内容客户端(extent_client)实现文件内容和文件属性的缓存,减轻文件内容服务(extent_server)的负载.文件相应的操作都时在文件缓存中进行，仅仅当缓存中不存在相应的文件内容或者属性时才需要访问文件内容服务(extent_server). 这次实验主要需要考虑两个问题:
+
+ 1. 如果设计文件缓存相应的数据结构
+ 2. 如果保证一致性
+
+##文件缓存
+文件内容客户端(extent_client)定义一个子类
+
+    class extent_client_cache : public extent_client {
+	    enum file_state {NONE,UPDATED, MODIFIED, REMOVED};
+	    struct extent {
+	    	std::string data;
+	    	file_state status;
+	    	extent_protocol::attr attr;
+	    	extent():status(NONE) {}
+	    };
+	    public:
+		    extent_client_cache(std::string dst);
+		    extent_protocol::status get(extent_protocol::extentid_t eid,
+			      std::string &buf);
+		    extent_protocol::status getattr(extent_protocol::extentid_t eid, extent_protocol::attr &a);
+		    extent_protocol::status put(extent_protocol::extentid_t eid, std::string buf);
+		    extent_protocol::status remove(extent_protocol::extentid_t eid);
+		    extent_protocol::status flush(extent_protocol::extentid_t eid);
+	    private:
+		    pthread_mutex_t extent_mutex; 
+		    std::map <extent_protocol::extentid_t, extent>file_cached;
+    }
+
+其中get，getaddr,put,remove操作都将进行重载，这些函数首先都访问文件缓存(file_cacahed),如果文件缓存中不存在相应的内容才会访问文件内容服务(extent_server). 这个新的文件内容客户端类中文件缓存的定义如下:
+        
+        pthread_mutex_t extent_mutex; 
+	    std::map <extent_protocol::extentid_t, extent>file_cached;
+     
+extent_mutex用户多线程互斥的访问file_cacahed. file_cached中key时文件id.
+value时extent.extent的定义如下:
+
+        struct extent {
+	        std::string data;
+	        file_state status;
+	    	extent_protocol::attr attr;
+	    	extent():status(NONE) {}
+	    };
+
+ - data:表示文件的数据.
+ - attr:表示文件的属性
+ - status: 表示这个文件在缓存中的状态.这个状态有四种:
+
+        enum file_state {NONE,UPDATED, MODIFIED, REMOVED};
+ 
+
+ - NONE:表示文件内容不存在，只缓存了文件属性.
+ - UPDATED:表示缓存了文件内容.并且文件内容没有被修改.此时文件内容可能已缓存也可能未缓存.
+ - MODIFIED:表示缓存了文件内容.并且内容已经被修改.文件属性可能已缓存,也可能未缓存.
+ - REMOVED:表示文件已删除.
+
+get，getaddr,put,remove的实现可以查阅extent_client_cache.cc.
+
+##缓存一致性
+因为在文件的读写都在文件缓存中进行,为了保证一致性(即读操作获取的内容必须是最近的写操作写的内容). yfs采用**释放一致性**来保证一致性. 因为yfs中文件的id(i-number号)和锁id时同样的值.当释放一个锁回锁服务器时，必须确保文件内容客户端(extent_client)中对应的缓存文件也flush回了文件内容服务(extent_server).并且从缓存中删除这个文件. flush操作检查文件内容是否已经修改，如果是则讲新的内容put到文件内容服务.如果文件被删除(即状态REMOVED),那么从文件内容服务上删除这个文件.
+
+例如客户端A获取一个文件的锁，然后从文件内容服务get文件的内容.并在本地缓存中修改这个文件的内容. 此时客户端B也尝试获取这个文件的锁.这时锁服务器给客户端A发送revoke消息.然后客户端A在将锁释放回锁服务器前先把已修改的文件内容flush回文件内容服务. 然后客户端B会获取到这个锁.在从文件内容服务get文件内容(B的缓存中不会已经缓存了这个文件,所以必须访问文件内容服务.如果曾经缓存了，在释放锁时也将这个项缓存删除了).这时客户端B获取到的内容就是A修改后的内容.
+
+首先我们需要实现flush操作.在extent_client_cache类中定义了成员函数flush.其实现在extent_client_cache.cc中.
+
+
+    extent_protocol::status
+    extent_client_cache::flush(extent_protocol::extentid_t eid)
+    {
+	    extent_protocol::status ret = extent_protocol::OK;
+	    int r;
+	    ScopedLock _m(&extent_mutex);
+	    bool flag = file_cached.count(eid);
+	    if (flag) {	
+		    switch(file_cached[eid].status) {
+			    case MODIFIED:
+				    ret = cl->call(extent_protocol::put, eid,                               file_cached[eid].data, r);
+				    break;
+			    case REMOVED:
+				    ret = cl->call(extent_protocol::remove, eid);
+				    break;
+			    case NONE:
+			    case UPDATED:
+			    default:
+				break;
+		    }
+		    file_cached.erase(eid);	
+	    } else {
+		    ret = extent_protocol::NOENT;
+	    }
+	    return ret;
+    }
+
+从中看到如果文件已经修改则需要put回文件内容服务.如果是已删除则需要在文件内容服务上也删除这个文件.无论缓存中eid文件的状态怎么样.最后都需要从本地缓存中删除:
+
+    file_cached.erase(eid);	    
+
+我们没有必要显示的将缓存的文件属性写回文件内容服务.当flush将已修改的内容
+写回到文件内容服务时.文件内容服务会自动更新文件的属性.
+
+###flush的调用点
+前面提到只有当锁被释放回锁服务器时才会讲文件缓存内容更新到文件内容服务.
+所以flush应该实在release中被调用.lock_client_cache类release函数中必须在释放锁到锁服务器前调用它的lu成员的dorelease函数. lu是个lock_release_user类的对象,dorelease是它的一个虚函数，然后在yfs_client.h中定义该类的子类，并重载dorelease. 
+
+    class lock_user : public lock_release_user {
+	    public:
+		    lock_user(extent_client_cache *e) : ec(e) {}; 
+		    void dorelease(lock_protocol::lockid_t lid) {
+			    ec->flush(lid);
+		    }
+        private:
+            extent_client_cache *ec;
+    };
+    
+
+可以看到dorelease直接调用flush操作. 最后我们将dorelease函数插入到锁客户端(lock_client_cache)中释放回锁服务器的地方:
+    
+
+ 1. lock_client_cache::release(lock_protocol::lockid_t lid)
+ 2. lock_client_cache::revoke_handler(lock_protocol::lockid_t lid, int &)
+
+这两个函数中都有释放锁回锁服务器的操作,所以插入了dorelease.
+
+因为现在锁的作用不单是保证文件系统操作的原子性，而且还驱动文件缓存更新到文件内容服务来保证一致性.所以之前的实验中不需要加锁的部分也需要加锁.例如read操作.并且确保yfs_client中的每一个get(eid),put(eid),getattr(eid)和
+remove(eid)调用前后被acquire(eid)/release(eid)所包围.
+
+###存在的问题
+文件属性的更新只有在flush调用put时才会更新到文件内容服务，但是如果一个文件只是被读取,并在客户端缓存,虽然文件内容没变,但是缓存的文件属性中的atime却更新了.但是flush操作并不会将这个未修改的文件写回到文件服务.所以文件内容服务上对应文件的atime却没有更新.即读操作没有更新atime.导致另一个客户端调用getattr时得到的atime不是正确的.
+
+    
