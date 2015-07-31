@@ -915,4 +915,107 @@ remove(eid)调用前后被acquire(eid)/release(eid)所包围.
 ###存在的问题
 文件属性的更新只有在flush调用put时才会更新到文件内容服务，但是如果一个文件只是被读取,并在客户端缓存,虽然文件内容没变,但是缓存的文件属性中的atime却更新了.但是flush操作并不会将这个未修改的文件写回到文件服务.所以文件内容服务上对应文件的atime却没有更新.即读操作没有更新atime.导致另一个客户端调用getattr时得到的atime不是正确的.
 
-    
+#Lab 6: Paxos
+##简介
+之前的实现中没有考虑**锁服务器**会fail的情形. 考虑到这种情形我们采用**replicated state machine(RSM)**方法来备份锁服务器.
+###RSM
+RSM基本的想法是这些机器初始状态相同,那么执行相同的操作系列后状态也是相同的. 因为网络乱序等原因,无法保证所有备份机器收到的操作请求序列都是相同的.所以采用一机器为master,master从客户端接受请求,决定请求次序,然后发送给各个备份机器.然后以相同的次序在所有备份(replicas)机器上执行,master等待所有备份机器返回,然后master返回给客户端.当master失败. 任何一个备份(replicas)可以接管工作.因为他们都有相同的状态.
+###Paxos
+上面的RSM的核心是要所有机器达成一个协议:哪一个备份(replica)是master,而哪些slave机器是正在运行的(alive),并没有fail.因为任何机器在任何时刻都有可能失败.
+
+**Paxos**算法可以参考 [Paxos Made Simple](http://pdos.csail.mit.edu/6.824-2012/papers/paxos-simple.pdf)这篇文章. 这里不做多介绍,主要说明下各种情形下的问题，实验中**Paxos**的伪代码实现如下:
+
+    proposer run(instance, v):
+        choose n, unique and higher than any n seen so far
+        send prepare(instance, n) to all servers including self
+        if oldinstance(instance, instance_value) from any node:
+            commit to the instance_value locally
+        else if prepare_ok(n_a, v_a) from majority:
+            v' = v_a with highest n_a; choose own v otherwise
+            send accept(instance, n, v') to all
+            if accept_ok(n) from majority:
+                send decided(instance, v') to all
+
+
+
+    acceptor state:
+        must persist across reboots
+        n_h (highest prepare seen)
+        instance_h, (highest instance accepted)
+        n_a, v_a (highest accept seen)
+
+    acceptor prepare(instance, n) handler:
+        if instance <= instance_h
+            reply oldinstance(instance, instance_value)
+        else if n > n_h
+            n_h = n
+            reply prepare_ok(n_a, v_a)
+        else
+            reply prepare_reject
+
+    acceptor accept(instance, n, v) handler:
+        if n >= n_h
+            n_a = n
+            v_a = v
+            reply accept_ok(n)
+        else
+            reply accept_reject
+
+    acceptor decide(instance, v) handler:
+        paxos_commit(instance, v)
+ 
+ 详细的代码实现见Paxos.cc
+ 
+###关于Paxos的问题
+ 自己思考的几个问题:
+
+ 1. Paxos基于达成一致需要什么前提?
+ 少于N/2个节点失败, 不存在拜占庭错误(non-Byzantine model)
+ 2. Paxos为什么要两阶段,一阶段不行吗?
+ 课件中指出:"Paxos has two phases
+ proposer can't just send "do you promise to commit to this value?" can't promise: maybe everyone else just promised to a different value have to be able to change mind so: prepare, and accept", 意思就是每个阶段不知道其他节点的信息，所以不能在一个阶段中就做出promise，可能其他阶段做了不同的promise,所以需要两个阶段.
+ 3. 为什么每个proposals需要一个编号?
+论文[Paxos Made Simple](http://pdos.csail.mit.edu/6.824-2012/papers/paxos-simple.pdf)给出的解释如下:"Several values could be proposed by different proposers at about the same time, leading to a situation in which every acceptor has accepted a value, but no single value is accepted by a majority of them. Even with just two proposed values, if each is accepted by about half the acceptors, failure of a single acceptor could make it impossible to learn which of the values was chosen.
+P1 and the requirement that a value is chosen only when it is accepted by a majority of acceptors imply that an acceptor must be allowed to accept
+more than one proposal. We keep track of the different proposals that an acceptor may accept by assigning a (natural) number to each proposal, so a proposal consists of a proposal number and a value. To prevent confusion, we require that different proposals have different numbers." 即如果不编号,可能会导致每个acceptor都接受一个议案，形成不了大多数
+ 4. 为什么需要leader?
+ 论文[Paxos Made Simple](http://pdos.csail.mit.edu/6.824-2012/papers/paxos-simple.pdf)给出的解释如下:"
+The algorithm chooses a leader, which plays the roles of the distinguished proposer and the distinguished learner",其中 "distinguished proposer"是为了解决活锁问题. "distinguished learner"
+是为了介绍通信复杂度(详见论文section2.3).
+ 5. What if leader fails while sending accept?
+ 6. What if a node fails after receiving accept?
+    + If it doesn’t restart …
+    + If it reboots …
+ 7. What if a node fails after sending prepare-ok?
+    + If it reboots …
+ 8. What if there is a network partition?
+ 课件中给出的解释是"
+What would happen if network partition(总共3个server s1 s2 s3)?
+  I.e. S3 was alive?
+  S3 would also initiate Paxos for new view
+  S3's prepare would not assemble a majority"
+ 9. What if a leader crashes in the middle of solicitation?
+ 10. What if a leader crashes after deciding but before
+announcing results?
+ 11. what if an acceptor crashes after receiving accept?
+A1: p1  a1v1
+A2: p1  a1v1 reboot  p2  a2v?
+A3: p1               p2  a2v?
+A2 must remember v_a/n_a across reboot! on disk
+  might be only intersection with new proposer's majority
+  and thus only evidence that already agreed on v1
+ 12. what if an acceptor reboots after sending prepare_ok?
+ does it have to remember n_p on disk?
+ if n_p not remembered, this could happen:
+ S1: p10            a10v10
+ S2: p10 p11 reboot a10v10 a11v11
+ S3:     p11               a11v11
+ 11's proposer did not see value 10, so 11 proposed its own value
+ but just before that, 10 had been chosen!
+ b/c S2 did not remember to ignore a10v10
+ 13. can Paxos get stuck?
+  yes, if there is not a majority that can communicate
+  how about if a majority is available?
+ 14. leader选举算法,怎么选出leader?
+ 课件中采用的最小id的作为leader,原文:"always have the primary be the live server with lowest ID".
+ 15. leader宕机,但新的leader还未选出,对系统会有什么影响?
