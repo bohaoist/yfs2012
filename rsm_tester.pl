@@ -438,7 +438,7 @@ if ($do_run[5]) {
     check_views( paxos_log($port), \@views, \@lastv);
   }
 
-  cleanup();
+cleanup();
 
 }
 
