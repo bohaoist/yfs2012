@@ -49,7 +49,7 @@ JSL_DBG_3	rpc/jsl_log.h	/^	JSL_DBG_3 = 3, \/\/ Info$/;"	e	enum:dbcode
 JSL_DBG_4	rpc/jsl_log.h	/^	JSL_DBG_4 = 4, \/\/ Debugging$/;"	e	enum:dbcode
 JSL_DBG_OFF	rpc/jsl_log.h	/^	JSL_DBG_OFF = 0,$/;"	e	enum:dbcode
 JSL_DEBUG_LEVEL	rpc/jsl_log.cc	/^int JSL_DEBUG_LEVEL = 0;$/;"	v
-LAB	GNUmakefile	/^LAB=6$/;"	m
+LAB	GNUmakefile	/^LAB=7$/;"	m
 LAB2GE	GNUmakefile	/^LAB2GE=$(shell expr $(LAB) \\>\\= 2)$/;"	m
 LAB3GE	GNUmakefile	/^LAB3GE=$(shell expr $(LAB) \\>\\= 3)$/;"	m
 LAB4GE	GNUmakefile	/^LAB4GE=$(shell expr $(LAB) \\>\\= 4)$/;"	m
@@ -97,8 +97,9 @@ RPCERR	lock_protocol.h	/^  enum xxstatus { OK, RETRY, RPCERR, NOENT, IOERR };$/;
 RPCERR	lock_protocol.h	/^  enum xxstatus { OK, RPCERR };$/;"	e	enum:rlock_protocol::xxstatus
 RPCERR	yfs_client.h	/^  enum xxstatus { OK, RPCERR, NOENT, IOERR, EXIST };$/;"	e	enum:yfs_client::xxstatus
 RPC_HEADER_SZ	rpc/marshall.h	/^	RPC_HEADER_SZ = static_max<sizeof(req_header), sizeof(reply_header)>::value + sizeof(rpc_sz_t) + sizeof(rpc_checksum_t)$/;"	e	enum:__anon7
-RSM	lock_smain.cc	40;"	d	file:
+RSM	lock_smain.cc	50;"	d	file:
 SOL	GNUmakefile	/^SOL=0$/;"	m
+STEP_ONE	lock_smain.cc	53;"	d	file:
 ScopedLock	rpc/slock.h	/^		ScopedLock(pthread_mutex_t *m): m_(m) {$/;"	f	struct:ScopedLock
 ScopedLock	rpc/slock.h	/^struct ScopedLock {$/;"	s
 ScopedLockClient	yfs_client.h	/^		ScopedLockClient(lock_client *lc, lock_protocol::lockid_t lid):$/;"	f	class:ScopedLockClient
@@ -141,9 +142,11 @@ acceptreq	paxos.cc	/^acceptor::acceptreq(std::string src, paxos_protocol::accept
 acceptreq	paxos_protocol.h	/^    acceptreq,$/;"	e	enum:paxos_protocol::rpc_numbers
 acquire	lock_client.cc	/^lock_client::acquire(lock_protocol::lockid_t lid)$/;"	f	class:lock_client
 acquire	lock_client_cache.cc	/^lock_client_cache::acquire(lock_protocol::lockid_t lid)$/;"	f	class:lock_client_cache
+acquire	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)$/;"	f	class:lock_client_cache_rsm
 acquire	lock_protocol.h	/^    acquire = 0x7001,$/;"	e	enum:lock_protocol::rpc_numbers
 acquire	lock_server.cc	/^lock_server::acquire(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
 acquire	lock_server_cache.cc	/^int lock_server_cache::acquire(lock_protocol::lockid_t lid, std::string id, $/;"	f	class:lock_server_cache
+acquire	lock_server_cache_rsm.cc	/^int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id, $/;"	f	class:lock_server_cache_rsm
 add	config.cc	/^config::add(std::string new_m, unsigned vid)$/;"	f	class:config
 addJob	rpc/thr_pool.cc	/^ThrPool::addJob(void *(*f)(void *), void *a)$/;"	f	class:ThrPool
 addObjJob	rpc/thr_pool.h	/^ThrPool::addObjJob(C *o, void (C::*m)(A), A a)$/;"	f	class:ThrPool
@@ -200,8 +203,12 @@ c	rpc/rpc.h	/^			pthread_cond_t c;$/;"	m	struct:rpcc::caller
 call	rpc/rpc.h	/^rpcc::call(unsigned int proc, R & r, TO to) $/;"	f	class:rpcc
 call	rpc/rpc.h	/^rpcc::call(unsigned int proc, const A1 & a1, R & r, TO to) $/;"	f	class:rpcc
 call	rpc/rpc.h	/^rpcc::call(unsigned int proc, const A1 & a1, const A2 & a2,$/;"	f	class:rpcc
+call	rsm_client.h	/^  rsm_client::call(unsigned int proc, const A1 & a1, $/;"	f	class:rsm_client
+call	rsm_client.h	/^  rsm_client::call(unsigned int proc, const A1 & a1, R & r)$/;"	f	class:rsm_client
+call	rsm_client.h	/^  rsm_client::call(unsigned int proc, const A1 & a1, const A2 & a2, R & r)$/;"	f	class:rsm_client
 call1	rpc/rpc.cc	/^rpcc::call1(unsigned int proc, marshall &req, unmarshall &rep,$/;"	f	class:rpcc
 call_m	rpc/rpc.h	/^rpcc::call_m(unsigned int proc, marshall &req, R & r, TO to) $/;"	f	class:rpcc
+call_m	rsm_client.h	/^rsm_client::call_m(unsigned int proc, marshall &req, R &r)$/;"	f	class:rsm_client
 callbacks_	rpc/pollmgr.h	/^		aio_callback *callbacks_[MAX_POLL_FDS];$/;"	m	class:PollMgr
 caller	rpc/rpc.cc	/^rpcc::caller::caller(unsigned int xxid, unmarshall *xun)$/;"	f	class:rpcc::caller
 caller	rpc/rpc.h	/^		struct caller {$/;"	s	class:rpcc
@@ -356,6 +363,7 @@ dup_req_	rpc/rpc.h	/^                struct request dup_req_;$/;"	m	class:rpcc	t
 ec	yfs_client.h	/^       extent_client_cache *ec;$/;"	m	class:lock_user
 ec	yfs_client.h	/^  extent_client *ec;$/;"	m	class:yfs_client
 enq	rpc/fifo.h	/^fifo<T>::enq(T e, bool blocking)$/;"	f	class:fifo
+execute	rsm.cc	/^rsm::execute(int procno, std::string req, std::string &r)$/;"	f	class:rsm
 extent	extent_client.h	/^		extent():status(NONE) {}$/;"	f	struct:extent_client_cache::extent
 extent	extent_client.h	/^	struct extent {$/;"	s	class:extent_client_cache
 extent	extent_server.h	/^ struct extent {$/;"	s	class:extent_server
@@ -386,6 +394,8 @@ fileinfo	yfs_client.h	/^  struct fileinfo {$/;"	s	class:yfs_client
 filename	yfs_client.cc	/^yfs_client::filename(inum inum)$/;"	f	class:yfs_client
 first	config.h	/^  std::string first;$/;"	m	class:config
 flush	extent_client_cache.cc	/^extent_client_cache::flush(extent_protocol::extentid_t eid)$/;"	f	class:extent_client_cache
+force_exit	lock_smain.cc	/^force_exit(int) {$/;"	f	file:
+force_exit	lock_tester.cc	/^force_exit(int) {$/;"	f	file:
 free_reply_window	rpc/rpc.cc	/^rpcs::free_reply_window(void)$/;"	f	class:rpcs
 fuseserver_create	fuse.cc	/^fuseserver_create(fuse_req_t req, fuse_ino_t parent, const char *name,$/;"	f
 fuseserver_createhelper	fuse.cc	/^fuseserver_createhelper(fuse_ino_t parent, const char *name,$/;"	f
@@ -457,12 +467,15 @@ highfds_	rpc/pollmgr.h	/^		int highfds_;$/;"	m	class:SelectAIO
 hinfo	handle.h	/^struct hinfo {$/;"	s
 hmap	handle.h	/^  std::map<std::string, struct hinfo *> hmap;$/;"	m	class:handle_mgr
 hostname	lock_client_cache.h	/^  std::string hostname;$/;"	m	class:lock_client_cache
+hostname	lock_client_cache_rsm.h	/^  std::string hostname;$/;"	m	class:lock_client_cache_rsm
 huge	test-lab-3-b.c	/^char huge[65536*2+1];$/;"	v
 id	fuse.cc	/^int id() { $/;"	f
 id	lock_client_cache.h	/^  std::string id;$/;"	m	class:lock_client_cache
+id	lock_client_cache_rsm.h	/^  std::string id;$/;"	m	class:lock_client_cache_rsm
 id	rpc/rpc.h	/^		unsigned int id() { return clt_nonce_; }$/;"	f	class:rpcc
 incref	rpc/connection.cc	/^connection::incref()$/;"	f	class:connection
 ind	rpc/marshall.h	/^		int ind() { return _ind;}$/;"	f	class:unmarshall
+init_members	rsm_client.cc	/^rsm_client::init_members()$/;"	f	class:rsm_client
 instance	paxos.h	/^  unsigned instance() { return instance_h; }$/;"	f	class:acceptor
 instance	paxos_protocol.h	/^    unsigned instance;$/;"	m	struct:paxos_protocol::acceptarg
 instance	paxos_protocol.h	/^    unsigned instance;$/;"	m	struct:paxos_protocol::decidearg
@@ -476,6 +489,7 @@ inum	yfs_client.h	/^    yfs_client::inum inum;$/;"	m	struct:yfs_client::dirent
 inum	yfs_client.h	/^  typedef unsigned long long inum;$/;"	t	class:yfs_client
 inviewchange	rsm.h	/^  bool inviewchange;$/;"	m	class:rsm
 invoke	rsm.cc	/^rsm::invoke(int proc, viewstamp vs, std::string req, int &dummy)$/;"	f	class:rsm
+invoke	rsm_client.cc	/^rsm_client::invoke(int proc, std::string req, std::string &rep)$/;"	f	class:rsm_client
 invoke	rsm_protocol.h	/^    invoke = 0x10001,$/;"	e	enum:rsm_protocol::rpc_numbers
 invoke	rsm_protocol.h	/^    invoke = 0x9001,$/;"	e	enum:rsm_client_protocol::rpc_numbers
 invoke_mutex	rsm.h	/^  pthread_mutex_t invoke_mutex;$/;"	m	class:rsm
@@ -498,13 +512,16 @@ joinres	rsm_protocol.h	/^  struct joinres {$/;"	s	class:rsm_protocol
 jsl_log	rpc/jsl_log.h	14;"	d
 jsl_set_debug	rpc/jsl_log.cc	/^jsl_set_debug(int level) {$/;"	f
 killprocess	rsm_tester.pl	/^sub killprocess {$/;"	s
+known_mems	rsm_client.h	/^  std::vector<std::string> known_mems;$/;"	m	class:rsm_client
 l	paxos.h	/^  log *l;$/;"	m	class:acceptor
 l	paxos.h	/^  log *l;$/;"	m	class:proposer
 labdir	GNUmakefile	/^labdir=$(shell basename $(PWD))$/;"	m
 last	rsm_protocol.h	/^    viewstamp last;$/;"	m	struct:rsm_protocol::transferres
 last_myvs	rsm.h	/^  viewstamp last_myvs;   \/\/ Viewstamp of the last executed request$/;"	m	class:rsm
+last_port	lock_client_cache_rsm.cc	/^int lock_client_cache_rsm::last_port = 0;$/;"	m	class:lock_client_cache_rsm	file:
+last_port	lock_client_cache_rsm.h	/^  static int last_port;$/;"	m	class:lock_client_cache_rsm
 lc	lock_demo.cc	/^lock_client *lc;$/;"	v
-lc	lock_tester.cc	/^lock_client_cache **lc = new lock_client_cache * [nt];$/;"	v
+lc	lock_tester.cc	/^lock_client_cache_rsm **lc = new lock_client_cache_rsm * [nt];$/;"	v
 lc	yfs_client.h	/^  lock_client *lc;$/;"	m	class:yfs_client
 lc_	yfs_client.h	/^		lock_client *lc_;$/;"	m	class:ScopedLockClient
 lcond	lock_protocol.h	/^	pthread_cond_t lcond;$/;"	m	class:lock
@@ -521,6 +538,9 @@ lock_client	lock_client.h	/^class lock_client {$/;"	c
 lock_client_cache	lock_client_cache.cc	/^lock_client_cache::lock_client_cache(std::string xdst, $/;"	f	class:lock_client_cache
 lock_client_cache	lock_client_cache.h	/^class lock_client_cache : public lock_client {$/;"	c
 lock_client_cache_h	lock_client_cache.h	5;"	d
+lock_client_cache_rsm	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::lock_client_cache_rsm(std::string xdst, $/;"	f	class:lock_client_cache_rsm
+lock_client_cache_rsm	lock_client_cache_rsm.h	/^class lock_client_cache_rsm : public lock_client {$/;"	c
+lock_client_cache_rsm_h	lock_client_cache_rsm.h	5;"	d
 lock_client_h	lock_client.h	4;"	d
 lock_demo	GNUmakefile	/^lock_demo=lock_demo.cc lock_client.cc$/;"	m
 lock_entry	lock_client_cache.h	/^		lock_entry():revoked(false), retry(false), state(NONE) {$/;"	f	struct:lock_client_cache::lock_entry
@@ -530,12 +550,16 @@ lock_entry	lock_server_cache.h	/^	struct lock_entry {$/;"	s	class:lock_server_ca
 lock_protocol	lock_protocol.h	/^class lock_protocol {$/;"	c
 lock_protocol_h	lock_protocol.h	4;"	d
 lock_release_user	lock_client_cache.h	/^class lock_release_user {$/;"	c
+lock_release_user	lock_client_cache_rsm.h	/^class lock_release_user {$/;"	c
 lock_server	GNUmakefile	/^lock_server=lock_server.cc lock_smain.cc$/;"	m
 lock_server	lock_server.cc	/^lock_server::lock_server():$/;"	f	class:lock_server
 lock_server	lock_server.h	/^class lock_server {$/;"	c
 lock_server_cache	lock_server_cache.cc	/^lock_server_cache::lock_server_cache()$/;"	f	class:lock_server_cache
 lock_server_cache	lock_server_cache.h	/^class lock_server_cache {$/;"	c
 lock_server_cache_h	lock_server_cache.h	2;"	d
+lock_server_cache_rsm	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::lock_server_cache_rsm(class rsm *_rsm) $/;"	f	class:lock_server_cache_rsm
+lock_server_cache_rsm	lock_server_cache_rsm.h	/^class lock_server_cache_rsm : public rsm_state_transfer {$/;"	c
+lock_server_cache_rsm_h	lock_server_cache_rsm.h	2;"	d
 lock_server_h	lock_server.h	5;"	d
 lock_state	lock_client_cache.h	/^	enum lock_state {NONE, FREE, LOCKED, ACQUIRING, RELEASING};$/;"	g	class:lock_client_cache
 lock_state	lock_server_cache.h	/^	enum lock_state {FREE, LOCKED, LOCKED_AND_WAIT, RETRYING};$/;"	g	class:lock_server_cache
@@ -563,6 +587,7 @@ lossy_test	rpc/rpctest.cc	/^lossy_test()$/;"	f
 lossytest_	rpc/rpc.h	/^		int lossytest_;$/;"	m	class:rpcc
 lossytest_	rpc/rpc.h	/^	int lossytest_; $/;"	m	class:rpcs
 lu	lock_client_cache.h	/^  class lock_release_user *lu;$/;"	m	class:lock_client_cache	typeref:class:lock_client_cache::lock_release_user
+lu	lock_client_cache_rsm.h	/^  class lock_release_user *lu;$/;"	m	class:lock_client_cache_rsm	typeref:class:lock_client_cache_rsm::lock_release_user
 m	handle.h	/^  std::string m;$/;"	m	struct:hinfo
 m	paxos_protocol.h	/^  std::string m;$/;"	m	struct:prop_t
 m	rpc/method_thread.h	/^				void (C::*m)(A1 a1, A2 a2);$/;"	m	class:__anon4::XXX
@@ -586,6 +611,7 @@ main	test-lab-3-c.c	/^main(int argc, char *argv[])$/;"	f
 majority	paxos.cc	/^proposer::majority(const std::vector<std::string> &l1, $/;"	f	class:proposer
 make_sockaddr	rpc/rpc.cc	/^make_sockaddr(const char *host, const char *port, struct sockaddr_in *dst){$/;"	f
 make_sockaddr	rpc/rpc.cc	/^make_sockaddr(const char *hostandport, struct sockaddr_in *dst){$/;"	f
+marshal_state	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::marshal_state()$/;"	f	class:lock_server_cache_rsm
 marshall	rpc/marshall.h	/^		marshall() {$/;"	f	class:marshall
 marshall	rpc/marshall.h	/^class marshall {$/;"	c
 marshall_h	rpc/marshall.h	2;"	d
@@ -629,6 +655,7 @@ n_a	paxos_protocol.h	/^    prop_t n_a;$/;"	m	struct:paxos_protocol::prepareres
 n_h	paxos.h	/^  prop_t n_h;		\/\/ number of the highest proposal seen in a prepare$/;"	m	class:acceptor
 nacquire	lock_server.h	/^  int nacquire;$/;"	m	class:lock_server
 nacquire	lock_server_cache.h	/^  int nacquire;$/;"	m	class:lock_server_cache
+nacquire	lock_server_cache_rsm.h	/^  int nacquire;$/;"	m	class:lock_server_cache_rsm
 name	log.h	/^  std::string name;$/;"	m	class:log
 name	yfs_client.h	/^    std::string name;$/;"	m	struct:yfs_client::dirent
 net_repair	rsm_protocol.h	/^    net_repair = 0x12001,$/;"	e	enum:rsm_test_protocol::rpc_numbers
@@ -723,6 +750,8 @@ preparereq	paxos.cc	/^acceptor::preparereq(std::string src, paxos_protocol::prep
 preparereq	paxos_protocol.h	/^    preparereq = 0x11001,$/;"	e	enum:paxos_protocol::rpc_numbers
 prepareres	paxos_protocol.h	/^  struct prepareres {$/;"	s	class:paxos_protocol
 primary	rsm.h	/^  std::string primary;$/;"	m	class:rsm
+primary	rsm_client.h	/^  std::string primary;$/;"	m	class:rsm_client
+primary_failure	rsm_client.cc	/^rsm_client::primary_failure()$/;"	f	class:rsm_client
 print_config	rsm_tester.pl	/^sub print_config {$/;"	s
 print_members	paxos.cc	/^print_members(const std::vector<std::string> &nodes)$/;"	f
 pro	config.h	/^  proposer *pro;$/;"	m	class:config
@@ -769,13 +798,21 @@ refcnt	handle.h	/^  int refcnt;$/;"	m	struct:hinfo
 refno_	rpc/connection.h	/^		int refno_;$/;"	m	class:connection
 reg	rpc/rpc.h	/^rpcs::reg(unsigned int proc, S*sob, int (S::*meth)(const A1 a1, R & r))$/;"	f	class:rpcs
 reg	rpc/rpc.h	/^rpcs::reg(unsigned int proc, S*sob, int (S::*meth)(const A1 a1, const A2 a2, $/;"	f	class:rpcs
+reg	rsm.h	/^  rsm::reg(int proc, S*sob, int (S::*meth)(const A1 a1, R & r))$/;"	f	class:rsm
+reg	rsm.h	/^  rsm::reg(int proc, S*sob, int (S::*meth)(const A1 a1, const A2 a2, $/;"	f	class:rsm
+reg	rsm.h	/^  rsm::reg(int proc, S*sob, int (S::*meth)(const A1 a1, const A2 a2, R & r))$/;"	f	class:rsm
 reg1	rpc/rpc.cc	/^rpcs::reg1(unsigned int proc, handler *h)$/;"	f	class:rpcs
+reg1	rsm.cc	/^rsm::reg1(int proc, handler *h)$/;"	f	class:rsm
 release	lock_client.cc	/^lock_client::release(lock_protocol::lockid_t lid)$/;"	f	class:lock_client
 release	lock_client_cache.cc	/^lock_client_cache::release(lock_protocol::lockid_t lid)$/;"	f	class:lock_client_cache
+release	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::release(lock_protocol::lockid_t lid)$/;"	f	class:lock_client_cache_rsm
 release	lock_protocol.h	/^    release,$/;"	e	enum:lock_protocol::rpc_numbers
 release	lock_server.cc	/^lock_server::release(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
 release	lock_server_cache.cc	/^lock_server_cache::release(lock_protocol::lockid_t lid, std::string id, $/;"	f	class:lock_server_cache
+release	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id, $/;"	f	class:lock_server_cache_rsm
 releasequeue	lock_client_cache.h	/^		pthread_cond_t releasequeue;$/;"	m	struct:lock_client_cache::lock_entry
+releaser	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::releaser()$/;"	f	class:lock_client_cache_rsm
+releasethread	lock_client_cache_rsm.cc	/^releasethread(void *x)$/;"	f	file:
 remove	extent_client.cc	/^extent_client::remove(extent_protocol::extentid_t eid)$/;"	f	class:extent_client
 remove	extent_client_cache.cc	/^extent_client_cache::remove(extent_protocol::extentid_t eid)$/;"	f	class:extent_client_cache
 remove	extent_protocol.h	/^    remove$/;"	e	enum:extent_protocol::rpc_numbers
@@ -800,13 +837,20 @@ retrans_	rpc/rpc.h	/^		bool retrans_;$/;"	m	class:rpcc
 retry	lock_client_cache.h	/^		bool retry;$/;"	m	struct:lock_client_cache::lock_entry
 retry	lock_protocol.h	/^    retry = 0x8002$/;"	e	enum:rlock_protocol::rpc_numbers
 retry_handler	lock_client_cache.cc	/^lock_client_cache::retry_handler(lock_protocol::lockid_t lid, $/;"	f	class:lock_client_cache
+retry_handler	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::retry_handler(lock_protocol::lockid_t lid, $/;"	f	class:lock_client_cache_rsm
+retryer	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::retryer()$/;"	f	class:lock_server_cache_rsm
 retryqueue	lock_client_cache.h	/^		pthread_cond_t retryqueue;$/;"	m	struct:lock_client_cache::lock_entry
+retrythread	lock_server_cache_rsm.cc	/^retrythread(void *x)$/;"	f	file:
 revoke	lock_protocol.h	/^    revoke = 0x8001,$/;"	e	enum:rlock_protocol::rpc_numbers
 revoke_handler	lock_client_cache.cc	/^lock_client_cache::revoke_handler(lock_protocol::lockid_t lid, $/;"	f	class:lock_client_cache
+revoke_handler	lock_client_cache_rsm.cc	/^lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid, $/;"	f	class:lock_client_cache_rsm
 revoked	lock_client_cache.h	/^		bool revoked;$/;"	m	struct:lock_client_cache::lock_entry
 revoked	lock_server_cache.h	/^		bool revoked;$/;"	m	struct:lock_server_cache::lock_entry
+revoker	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::revoker()$/;"	f	class:lock_server_cache_rsm
+revokethread	lock_server_cache_rsm.cc	/^revokethread(void *x)$/;"	f	file:
 rfds_	rpc/pollmgr.h	/^		fd_set rfds_;$/;"	m	class:SelectAIO
 rlock_port	lock_client_cache.h	/^  int rlock_port;$/;"	m	class:lock_client_cache
+rlock_port	lock_client_cache_rsm.h	/^  int rlock_port;$/;"	m	class:lock_client_cache_rsm
 rlock_protocol	lock_protocol.h	/^class rlock_protocol {$/;"	c
 rpc_checksum_t	rpc/marshall.h	/^typedef uint64_t rpc_checksum_t;$/;"	t
 rpc_const	rpc/rpc.h	/^class rpc_const {$/;"	c
@@ -828,8 +872,13 @@ rpcs	rpc/rpc.h	/^class rpcs : public chanmgr {$/;"	c
 rpcstate_t	rpc/rpc.h	/^	} rpcstate_t;$/;"	t	class:rpcs	typeref:enum:rpcs::__anon6
 rpctest	GNUmakefile	/^rpc\/rpctest=rpc\/rpctest.cc$/;"	m
 rpdu_	rpc/connection.h	/^		charbuf rpdu_;$/;"	m	class:connection
+rsm	lock_server_cache_rsm.h	/^  class rsm *rsm;$/;"	m	class:lock_server_cache_rsm	typeref:class:lock_server_cache_rsm::rsm
 rsm	rsm.cc	/^rsm::rsm(std::string _first, std::string _me) $/;"	f	class:rsm
 rsm	rsm.h	/^class rsm : public config_view_change {$/;"	c
+rsm_client	rsm_client.cc	/^rsm_client::rsm_client(std::string dst)$/;"	f	class:rsm_client
+rsm_client	rsm_client.h	/^class rsm_client {$/;"	c
+rsm_client_h	rsm_client.h	2;"	d
+rsm_client_mutex	rsm_client.h	/^  pthread_mutex_t rsm_client_mutex;$/;"	m	class:rsm_client
 rsm_client_protocol	rsm_protocol.h	/^class rsm_client_protocol {$/;"	c
 rsm_files	GNUmakefile	/^rsm_files = rsm.cc paxos.cc config.cc log.cc handle.cc$/;"	m
 rsm_h	rsm.h	4;"	d
@@ -840,6 +889,7 @@ rsm_state_transfer	rsm_state_transfer.h	/^class rsm_state_transfer {$/;"	c
 rsm_state_transfer_h	rsm_state_transfer.h	2;"	d
 rsm_test_protocol	rsm_protocol.h	/^class rsm_test_protocol {$/;"	c
 rsm_tester	GNUmakefile	/^rsm_tester=rsm_tester.cc rsmtest_client.cc$/;"	m
+rsmc	lock_client_cache_rsm.h	/^  rsm_client *rsmc;$/;"	m	class:lock_client_cache_rsm
 rsmrpc	rsm.h	/^  rpcs *rsmrpc;$/;"	m	class:rsm
 rsmtest_client	rsmtest_client.cc	/^rsmtest_client::rsmtest_client(std::string dst)$/;"	f	class:rsmtest_client
 rsmtest_client	rsmtest_client.h	/^class rsmtest_client {$/;"	c
@@ -881,6 +931,7 @@ stat	lock_client.cc	/^lock_client::stat(lock_protocol::lockid_t lid)$/;"	f	class
 stat	lock_protocol.h	/^    stat$/;"	e	enum:lock_protocol::rpc_numbers
 stat	lock_server.cc	/^lock_server::stat(int clt, lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server
 stat	lock_server_cache.cc	/^lock_server_cache::stat(lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server_cache
+stat	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::stat(lock_protocol::lockid_t lid, int &r)$/;"	f	class:lock_server_cache_rsm
 state	lock_client_cache.h	/^		lock_state state;$/;"	m	struct:lock_client_cache::lock_entry
 state	lock_server_cache.h	/^		lock_state state;$/;"	m	struct:lock_server_cache::lock_entry
 state	rsm_protocol.h	/^    std::string state;$/;"	m	struct:rsm_protocol::transferres
@@ -949,6 +1000,7 @@ unlinkn	test-lab-3-b.c	/^unlinkn(const char *d, const char *prefix, int nf)$/;"	
 unlinkn	test-lab-3-c.c	/^unlinkn(const char *d, const char *prefix, int nf)$/;"	f
 unmarshal_args_failure	rpc/rpc.h	/^		static const int unmarshal_args_failure = -2;$/;"	m	class:rpc_const
 unmarshal_reply_failure	rpc/rpc.h	/^		static const int unmarshal_reply_failure = -3;$/;"	m	class:rpc_const
+unmarshal_state	lock_server_cache_rsm.cc	/^lock_server_cache_rsm::unmarshal_state(std::string state)$/;"	f	class:lock_server_cache_rsm
 unmarshall	rpc/marshall.h	/^		unmarshall(): _buf(NULL),_sz(0),_ind(0),_ok(false) {}$/;"	f	class:unmarshall
 unmarshall	rpc/marshall.h	/^		unmarshall(char *b, int sz): _buf(b),_sz(sz),_ind(),_ok(true) {}$/;"	f	class:unmarshall
 unmarshall	rpc/marshall.h	/^		unmarshall(const std::string &s) : _buf(NULL),_sz(0),_ind(0),_ok(false) $/;"	f	class:unmarshall
@@ -997,6 +1049,7 @@ write_cb	rpc/connection.cc	/^connection::write_cb(int s)$/;"	f	class:connection
 writeat	test-lab-2-b.pl	/^sub writeat {$/;"	s
 writeone	test-lab-2-b.pl	/^sub writeone {$/;"	s
 writepdu	rpc/connection.cc	/^connection::writepdu()$/;"	f	class:connection
+xid	lock_client_cache_rsm.h	/^  lock_protocol::xid_t xid;$/;"	m	class:lock_client_cache_rsm
 xid	rpc/marshall.h	/^	int xid;$/;"	m	struct:reply_header
 xid	rpc/marshall.h	/^	int xid;$/;"	m	struct:req_header
 xid	rpc/rpc.h	/^			unsigned int xid;$/;"	m	struct:rpcc::caller
@@ -1040,7 +1093,9 @@ yyy	rpc/method_thread.h	/^				static void *yyy(void *vvv) {$/;"	f	class:__anon4:
 ~lock	lock_protocol.h	/^	~lock(){};$/;"	f	class:lock
 ~lock_client	lock_client.h	/^  virtual ~lock_client() {};$/;"	f	class:lock_client
 ~lock_client_cache	lock_client_cache.h	/^  virtual ~lock_client_cache() {};$/;"	f	class:lock_client_cache
+~lock_client_cache_rsm	lock_client_cache_rsm.h	/^  virtual ~lock_client_cache_rsm() {};$/;"	f	class:lock_client_cache_rsm
 ~lock_release_user	lock_client_cache.h	/^  virtual ~lock_release_user() {};$/;"	f	class:lock_release_user
+~lock_release_user	lock_client_cache_rsm.h	/^  virtual ~lock_release_user() {};$/;"	f	class:lock_release_user
 ~lock_server	lock_server.h	/^  ~lock_server() {};$/;"	f	class:lock_server
 ~marshall	rpc/marshall.h	/^		~marshall() { $/;"	f	class:marshall
 ~paxos_change	paxos.h	/^  virtual ~paxos_change() {};$/;"	f	class:paxos_change

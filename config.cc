@@ -232,52 +232,52 @@ config::heartbeater()
   std::vector<std::string> cmems;
   ScopedLock ml(&cfg_mutex);
   
-  while (1) {
+  	while (1) {
 
-    gettimeofday(&now, NULL);
-    next_timeout.tv_sec = now.tv_sec + 3;
-    next_timeout.tv_nsec = 0;
-    tprintf("heartbeater: go to sleep\n");
-    pthread_cond_timedwait(&config_cond, &cfg_mutex, &next_timeout);
+    	gettimeofday(&now, NULL);
+    	next_timeout.tv_sec = now.tv_sec + 3;
+    	next_timeout.tv_nsec = 0;
+    	tprintf("heartbeater: go to sleep\n");
+    	pthread_cond_timedwait(&config_cond, &cfg_mutex, &next_timeout);
 
-    stable = true;
-    vid = myvid;
-    cmems = get_view_wo(vid);
-    tprintf("heartbeater: current membership %s\n", print_members(cmems).c_str());
+    	stable = true;
+    	vid = myvid;
+    	cmems = get_view_wo(vid);
+    	tprintf("heartbeater: current membership %s\n", print_members(cmems).c_str());
 
-    if (!isamember(me, cmems)) {
-      tprintf("heartbeater: not member yet; skip hearbeat\n");
-      continue;
-    }
+    	if (!isamember(me, cmems)) {
+    		tprintf("heartbeater: not member yet; skip hearbeat\n");
+      		continue;
+    	}
 
-    //find the node with the smallest id
-    m = me;
-    for (unsigned i = 0; i < cmems.size(); i++) {
-      if (m > cmems[i])
-	m = cmems[i];
-    }
+    	//find the node with the smallest id
+    	m = me;
+    	for (unsigned i = 0; i < cmems.size(); i++) {
+      		if (m > cmems[i])
+			m = cmems[i];
+    	}
 
-    if (m == me) {
-      //if i am the one with smallest id, ping the rest of the nodes
-      for (unsigned i = 0; i < cmems.size(); i++) {
-	if (cmems[i] != me) {
-	  if ((h = doheartbeat(cmems[i])) != OK) {
-	    stable = false;
-	    m = cmems[i];
-	    break;
-	  }
-	}
-      }
-    } else {
-      //the rest of the nodes ping the one with smallest id
-	if ((h = doheartbeat(m)) != OK) 
-	    stable = false;
-    }
+    	if (m == me) {
+      		//if i am the one with smallest id, ping the rest of the nodes
+      		for (unsigned i = 0; i < cmems.size(); i++) {
+				if (cmems[i] != me) {
+	  				if ((h = doheartbeat(cmems[i])) != OK) {
+	    			stable = false;
+	    			m = cmems[i];
+	    			break;
+	  				}
+				}
+      		} 
+		} else {
+      		//the rest of the nodes ping the one with smallest id
+			if ((h = doheartbeat(m)) != OK) 
+	    		stable = false;
+    	}
 
-    if (!stable && vid == myvid) {
-      remove_wo(m);
-    }
-  }
+    	if (!stable && vid == myvid) {
+      		remove_wo(m);
+    	}
+  	}
 }
 
 paxos_protocol::status
