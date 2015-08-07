@@ -233,7 +233,6 @@ lock_server_cache_rsm::marshal_state()
   std::string r;
   
   ScopedLock ml(&server_mutex);
- // VERIFY(pthread_mutex_lock(&server_mutex) == 0);
   marshall rep;
   unsigned int size = lockmap.size();
   rep << size;
@@ -281,7 +280,6 @@ lock_server_cache_rsm::marshal_state()
 		rep << iter_client_reply_map->second;
 	}
   }
-  //VERIFY(pthread_mutex_unlock(&server_mutex) == 0);
   r = rep.str();
   return r;
 }
@@ -289,9 +287,8 @@ lock_server_cache_rsm::marshal_state()
 void
 lock_server_cache_rsm::unmarshal_state(std::string state)
 {
-	
-	ScopedLock mr(&server_mutex);
-//	VERIFY(pthread_mutex_lock(&server_mutex) == 0);
+	/*
+	ScopedLock ml(&server_mutex);
 	unmarshall rep (state);
 	unsigned int lockmap_size;
 	rep >> lockmap_size;
@@ -336,8 +333,7 @@ lock_server_cache_rsm::unmarshal_state(std::string state)
 			entry->highest_xid_release_reply[client_id] = ret;
 		}
 		lockmap[lid] = *entry;
-	}
-//	VERIFY(pthread_mutex_unlock(&server_mutex) == 0);
+	}*/
 }
 
 lock_protocol::status
