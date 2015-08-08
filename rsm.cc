@@ -395,6 +395,7 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
 		myvs.seqno++;
 		
 		bool all_ok = true;
+		bool first = true;
 		std::vector<std::string> cur_view = cfg->get_view(vid_commit);
 		for (unsigned int i = 0; i < cur_view.size() && all_ok; i++) {
 			const std::string &cur_replica = cur_view[i];
@@ -409,6 +410,11 @@ rsm::client_invoke(int procno, std::string req, std::string &r)
 				VERIFY(pthread_mutex_lock(&rsm_mutex) == 0);
 				if (!cl || r1 != rsm_protocol::OK) 
 					all_ok = false;
+				if (first) {
+					first = false;
+					breakpoint1();
+					partition1();
+				}
 			}
 		}
 		if (all_ok) 
@@ -445,6 +451,7 @@ rsm::invoke(int proc, viewstamp vs, std::string req, int &dummy)
 		myvs.seqno++;
 		std::string r;
 		execute(proc, req, r);
+		breakpoint1();
 	}
 			return ret;
 }

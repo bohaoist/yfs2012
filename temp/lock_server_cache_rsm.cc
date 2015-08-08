@@ -29,6 +29,7 @@ retrythread(void *x)
 lock_server_cache_rsm::lock_server_cache_rsm(class rsm *_rsm) 
   : rsm (_rsm)
 {
+	VERIFY(pthread_mutex_init(&server_mutex, NULL) == 0);
   pthread_t th;
   int r = pthread_create(&th, NULL, &revokethread, (void *) this);
   VERIFY (r == 0);
@@ -50,7 +51,6 @@ lock_server_cache_rsm::revoker()
 		if (rsm->amiprimary()) {
 			int r;
 			rpcc *cl = handle(e.id).safebind();
-			VERIFY(cl != NULL);
 			cl->call(rlock_protocol::revoke, e.lid, e.xid, r);
 		}
 	}
@@ -71,7 +71,6 @@ lock_server_cache_rsm::retryer()
 		if (rsm->amiprimary()) {
 			int r;
 			rpcc *cl = handle(e.id).safebind();
-			VERIFY(cl != NULL);
 			cl->call(rlock_protocol::retry, e.lid, e.xid, r);
 		}
 	}
@@ -84,7 +83,7 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
 	bool revoke = false;
 	lock_protocol::status ret = lock_protocol::OK;
 	std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
-	pthread_mutex_lock(&server_mutex);
+	VERIFY(pthread_mutex_lock(&server_mutex) == 0);
 	iter = lockmap.find(lid);
 	if (iter == lockmap.end()){ 
 		iter = lockmap.insert(std::make_pair(lid, lock_entry())).first;
@@ -99,7 +98,6 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
 		le.highest_xid_release_reply.erase(id);
 
 		switch(iter->second.state) {
-		
 			case FREE:
 				iter->second.state = LOCKED;
 				iter->second.owner = id;
@@ -115,6 +113,8 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
 		
 			case LOCKED_AND_WAIT:
 				iter->second.waitset.insert(id);
+				revoke_queue.enq(revoke_retry_entry(iter->second.owner, lid, 
+								le.highest_xid_from_client[iter->second.owner]));
 				ret = lock_protocol::RETRY;
 				break;
 		
@@ -146,7 +146,7 @@ int lock_server_cache_rsm::acquire(lock_protocol::lockid_t lid, std::string id,
 		printf("ERROR: received acquire with old xid. Highest seen: %lld, current xid: %lld\n", xid_iter->second, 		xid);		ret = lock_protocol::RPCERR;
 	}	
 	
-	pthread_mutex_unlock(&server_mutex);
+	VERIFY(pthread_mutex_unlock(&server_mutex) == 0);
 	
 	return ret;
 }
@@ -159,7 +159,7 @@ lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id,
 	std::string client_need_retry;
 	lock_protocol::status ret = lock_protocol::OK;
 	std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
-	pthread_mutex_lock(&server_mutex);
+	VERIFY(pthread_mutex_lock(&server_mutex) == 0);
 	iter = lockmap.find(lid);
 	if (iter == lockmap.end()) {
 		printf("ERROR: can't find lock with lockid = %d\n", lid);
@@ -220,7 +220,7 @@ lock_server_cache_rsm::release(lock_protocol::lockid_t lid, std::string id,
 		printf("ERROR: received release for lock with no recorded xid for this client.\n");
       		ret = lock_protocol::RPCERR;
 	}
-	pthread_mutex_unlock(&server_mutex);
+	VERIFY(pthread_mutex_unlock(&server_mutex) ==0);
 			
 	return ret;
 }
@@ -232,7 +232,8 @@ lock_server_cache_rsm::marshal_state()
   std::ostringstream ost;
   std::string r;
   
-  ScopedLock ml(&server_mutex);
+ // ScopedLock ml(&server_mutex);
+  VERIFY(pthread_mutex_lock(&server_mutex) == 0);
   marshall rep;
   unsigned int size = lockmap.size();
   rep << size;
@@ -280,6 +281,7 @@ lock_server_cache_rsm::marshal_state()
 		rep << iter_client_reply_map->second;
 	}
   }
+  VERIFY(pthread_mutex_unlock(&server_mutex) == 0);
   r = rep.str();
   return r;
 }
@@ -287,8 +289,9 @@ lock_server_cache_rsm::marshal_state()
 void
 lock_server_cache_rsm::unmarshal_state(std::string state)
 {
-	/*
-	ScopedLock ml(&server_mutex);
+	
+//	ScopedLock mr(&server_mutex);
+	VERIFY(pthread_mutex_lock(&server_mutex) == 0);
 	unmarshall rep (state);
 	unsigned int lockmap_size;
 	rep >> lockmap_size;
@@ -333,7 +336,8 @@ lock_server_cache_rsm::unmarshal_state(std::string state)
 			entry->highest_xid_release_reply[client_id] = ret;
 		}
 		lockmap[lid] = *entry;
-	}*/
+	}
+	VERIFY(pthread_mutex_unlock(&server_mutex) == 0);
 }
 
 lock_protocol::status

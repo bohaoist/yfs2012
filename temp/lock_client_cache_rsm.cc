@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "tprintf.h"
+#include <sys/time.h>
 
 #include "rsm_client.h"
 
@@ -17,7 +18,6 @@ releasethread(void *x)
   cc->releaser();
   return 0;
 }
-
 int lock_client_cache_rsm::last_port = 0;
 
 lock_client_cache_rsm::lock_client_cache_rsm(std::string xdst, 
@@ -40,6 +40,7 @@ lock_client_cache_rsm::lock_client_cache_rsm(std::string xdst,
   // You fill this in Step Two, Lab 7
   // - Create rsmc, and use the object to do RPC 
   //   calls instead of the rpcc object of lock_client
+  VERIFY(pthread_mutex_init(&client_mutex, NULL) == 0);
   rsmc = new rsm_client(xdst);
 
   pthread_t th;
@@ -64,13 +65,14 @@ lock_client_cache_rsm::releaser()
 		}
 		int r;
 		rsmc->call(lock_protocol::release, e.lid, id, e.xid, r);
-        	pthread_mutex_lock(&client_mutex);
+       	VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 		std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
 		iter = lockmap.find(e.lid);
 		VERIFY(iter != lockmap.end());
 		iter->second.state = NONE;
 		pthread_cond_broadcast(&iter->second.releasequeue);
-		pthread_mutex_unlock(&client_mutex);
+		pthread_cond_broadcast(&iter->second.waitqueue);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 	}
 }
 
@@ -81,7 +83,7 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
   	int ret = lock_protocol::OK;
 	int r; 
 	std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
-	pthread_mutex_lock(&client_mutex);
+	VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 	iter = lockmap.find(lid);
 	if(iter == lockmap.end()) {
 		iter = lockmap.insert(std::make_pair(lid, lock_entry())).first;
@@ -94,16 +96,27 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
 				xid++;
 				iter->second.state = ACQUIRING;
 				iter->second.retry = false;
-				pthread_mutex_unlock(&client_mutex);
+	
+				VERIFY(pthread_mutex_unlock(&client_mutex) ==0);
 				ret = rsmc->call(lock_protocol::acquire, lid, id, iter->second.xid, r);
-				pthread_mutex_lock(&client_mutex);
+				VERIFY(pthread_mutex_lock(&client_mutex) == 0);
+
 				if (ret == lock_protocol::OK) {
 					iter->second.state = LOCKED;
-					pthread_mutex_unlock(&client_mutex);
+					VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 					return ret;
 				} else if (ret == lock_protocol::RETRY) {
 					if(!iter->second.retry) {
-						pthread_cond_wait(&iter->second.retryqueue, &client_mutex);
+						struct timeval now;
+						struct timespec next_timeout;
+						gettimeofday(&now, NULL);
+						next_timeout.tv_sec = now.tv_sec + 3;
+						next_timeout.tv_nsec = 0;
+						int r = pthread_cond_timedwait(&iter->second.retryqueue, 
+								&client_mutex,&next_timeout);				
+				   		if (r == ETIMEDOUT)
+							iter->second.retry = true;
+					//	pthread_cond_wait(&iter->second.retryqueue, &client_mutex);
 					}
 				}
 				break;
@@ -122,16 +135,26 @@ lock_client_cache_rsm::acquire(lock_protocol::lockid_t lid)
 					iter->second.retry = false;
 					iter->second.xid = xid;
 					xid++;
-					pthread_mutex_unlock(&client_mutex);
+					VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 					ret = rsmc->call(lock_protocol::acquire, lid, id, iter->second.xid, r);
-					pthread_mutex_lock(&client_mutex);
+					VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 					if (ret == lock_protocol::OK) {
 						iter->second.state = LOCKED;
-						pthread_mutex_unlock(&client_mutex);
+						VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 						return ret;
 					} else if (ret == lock_protocol::RETRY) {
-						if(!iter->second.retry)
-							pthread_cond_wait(&iter->second.retryqueue, &client_mutex);
+						if(!iter->second.retry) {
+							struct timeval now;
+							struct timespec next_timeout;
+							gettimeofday(&now, NULL);
+							next_timeout.tv_sec = now.tv_sec + 3;
+							next_timeout.tv_nsec = 0;
+							int r = pthread_cond_timedwait(&iter->second.retryqueue, 
+									&client_mutex,&next_timeout);
+							if (r == ETIMEDOUT)
+									iter->second.retry = true;
+					//		pthread_cond_wait(&iter->second.retryqueue, &client_mutex);
+						}
 					}
 				}
 				break;	
@@ -149,30 +172,34 @@ lock_client_cache_rsm::release(lock_protocol::lockid_t lid)
  	int r;
 	lock_protocol::status ret = lock_protocol::OK;
 	std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
-	pthread_mutex_lock(&client_mutex);
+	VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 	iter = lockmap.find(lid);
 	if (iter == lockmap.end()) {
 		printf("ERROR: can't find lock with lockid = %d\n", lid);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		return lock_protocol::NOENT;
 	}
 	if (iter->second.revoked) {
 		iter->second.state = RELEASING;
 		iter->second.revoked = false;
-		pthread_mutex_unlock(&client_mutex);
+		lock_protocol::xid_t cur_xid = iter->second.xid;
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		//for lab5, flush file extent from extent_client to extent_server 
 		if (lu)
 			lu->dorelease(lid);
 		
-		ret = rsmc->call(lock_protocol::release, lid, id, iter->second.xid, r);
-		pthread_mutex_lock(&client_mutex);
+		ret = rsmc->call(lock_protocol::release, lid, id, cur_xid, r);
+		
+		VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 		iter->second.state = NONE;
 		pthread_cond_broadcast(&iter->second.releasequeue);
-		pthread_mutex_unlock(&client_mutex);
+		pthread_cond_broadcast(&iter->second.waitqueue);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		return ret;
 	} else {
 		iter->second.state = FREE;
 		pthread_cond_signal(&iter->second.waitqueue);
-		pthread_mutex_unlock(&client_mutex);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		return lock_protocol::OK;
 	}	
 }
@@ -185,23 +212,28 @@ lock_client_cache_rsm::revoke_handler(lock_protocol::lockid_t lid,
 	int r;
 	int ret = rlock_protocol::OK;
 	std::map<lock_protocol::lockid_t, lock_entry>::iterator iter;
-	pthread_mutex_lock(&client_mutex);
+	VERIFY(pthread_mutex_lock(&client_mutex) == 0);
 	iter = lockmap.find(lid);
 	if (iter == lockmap.end()) {
 		printf("ERROR: can't find lock with lockid = %d\n", lid);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		return lock_protocol::NOENT;
 	}
-	VERIFY(iter->second.xid == xid);
-	if (iter->second.state == FREE) {
-		iter->second.state = RELEASING;
-		release_queue.enq(release_entry(lid, xid));
-		pthread_mutex_unlock(&client_mutex);
-		
-	} else {
-		iter->second.revoked = true;
-		pthread_mutex_unlock(&client_mutex);
+	if (iter->second.xid == xid) {
+		if (iter->second.state == FREE) {
+			iter->second.state = RELEASING;
+			iter->second.revoked = false;
+			release_queue.enq(release_entry(lid, xid));
+			VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
+		} else {
+			//handle duplicated revoke for lab7 step four 
+			// when lock state is NONE or RELEASING, the lock is released or in releasing.
+			// eg. the lock has been revoked;
+	//		if (iter->second.state != NONE || iter->second.state != RELEASING)
+			iter->second.revoked = true;
+			VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
+		}
 	}
-  
   	return ret;
 }
 
@@ -215,13 +247,15 @@ lock_client_cache_rsm::retry_handler(lock_protocol::lockid_t lid,
 	iter = lockmap.find(lid);
 	if (iter == lockmap.end()) {
 		printf("ERROR: can't find lock with lockid = %d\n", lid);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
 		return lock_protocol::NOENT;
 	}
-	VERIFY(iter->second.xid == xid);
-	iter->second.retry = true;
-	pthread_cond_signal(&iter->second.retryqueue);
-//	pthread_cond_signal(&iter->second.waitqueue);
-	pthread_mutex_unlock(&client_mutex);
+	if (iter->second.xid == xid) { 
+		iter->second.retry = true;
+		pthread_cond_signal(&iter->second.retryqueue);
+	//	pthread_cond_signal(&iter->second.waitqueue);
+		VERIFY(pthread_mutex_unlock(&client_mutex) == 0);
+	}
 	return ret;
 }
 
