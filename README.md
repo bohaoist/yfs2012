@@ -1,7 +1,38 @@
-# yfs2012
-#6.824 Lab 1: Lock Server
+﻿# yfs2012
+#Yield another File System
+Yield another File System用作2012年[MIT 6.824 Distributed Systems](http://pdos.csail.mit.edu/6.824-2012/index.html)
+的课程实践,按照论文[Frangipani: A Scalable Distributed File System](http://pdos.csail.mit.edu/6.824-2012/papers/thekkath-frangipani.pdf)的思路实现一个分布式的文件系统. 文件系统的基本结构如下:
+![yfs](https://github.com/ldaochen/yfs2012/raw/lab2/yfs.jpg)
 
+ 
 
+ - yfs: 文件系统客户端(相对extent server),提供文件操作API.
+ - extent server: 文件存储服务
+ - lock server: 锁服务,保证文件系统并发访问时的行为正确
+ 
+主要需要实现的模块和功能如下:
+ 1. 锁服务
+ 2. 文件系统服务
+ 3. 锁缓存和文件缓存,一致性
+ 4. 利用Paxos算法和Replicated State Machine方法备份锁服务.
+
+文档后面的7节依次介绍这些功能的实现,这7节分别是:
+
+**Lab 1 - Lock Server**
+
+**Lab 2 - Basic File Server**
+
+**Lab 3 - MKDIR, UNLINK, and Locking**
+
+**Lab 4 - Caching Lock Server**
+
+**Lab 5 - Caching Extent Server + Consistency**
+
+**Lab 6 - Paxos**
+
+**Lab 7 - Replicated lock server**
+
+#Lab 1: Lock Server
 ##简介
 整个的2012年MIT 6.824 课程实验需要完成一个分布式的文件系统, 而文件系统结构的更新需要在锁的保护下进行.所以本次实验(lab1)是为了实现一个简单的锁服务. 
 
@@ -917,7 +948,7 @@ remove(eid)调用前后被acquire(eid)/release(eid)所包围.
 
 #Lab 6: Paxos
 ##简介
-之前的实现中没有考虑**锁服务器**会fail的情形. 考虑到这种情形我们采用**replicated state machine(RSM)**方法来备份锁服务器.
+之前的实现中没有考虑**锁服务器**会failure的情形. 考虑到这种情形我们采用**replicated state machine(RSM)**方法来备份锁服务器.
 ###RSM
 RSM基本的想法是这些机器初始状态相同,那么执行相同的操作系列后状态也是相同的. 因为网络乱序等原因,无法保证所有备份机器收到的操作请求序列都是相同的.所以采用一机器为master,master从客户端接受请求,决定请求次序,然后发送给各个备份机器.然后以相同的次序在所有备份(replicas)机器上执行,master等待所有备份机器返回,然后master返回给客户端.当master失败. 任何一个备份(replicas)可以接管工作.因为他们都有相同的状态.
 ###Paxos
@@ -1019,3 +1050,9 @@ A2 must remember v_a/n_a across reboot! on disk
  14. leader选举算法,怎么选出leader?
  课件中采用的最小id的作为leader,原文:"always have the primary be the live server with lowest ID".
  15. leader宕机,但新的leader还未选出,对系统会有什么影响?
+
+ #Lab 7: Replicated State Machine
+ ##简介
+ 本次需要实现**锁服务**的fault tolerance. 具体时现在采用RSM(Replicated State Machine)来实现. 
+ 要找工作没时间写文档了～有时间在写吧. Paxos和RSM真是...难写难调啊。
+ 
